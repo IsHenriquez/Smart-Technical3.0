@@ -10,8 +10,8 @@ import authV2MaskDark from '@images/pages/misc-mask-dark.png'
 import authV2MaskLight from '@images/pages/misc-mask-light.png'
 import technicalService from '@images/pages/technical_support_services.jpg'
 import {
-  emailValidator,
-  requiredValidator,
+emailValidator,
+requiredValidator,
 } from '@validators'
 import { VForm } from 'vuetify/components/VForm'
 
@@ -34,10 +34,11 @@ const password = ref('')
 const rememberMe = ref(false)
 
 const login = () => {
-  axios.post('https://smarttechnicalcl.000webhostapp.com/api/auth/login', {
-    email: email.value,
-    password: password.value,
-  }).then(r => {
+  const formData = new FormData()
+
+  formData.append('email', email.value)
+  formData.append('password', password.value)
+  axios.post('/auth/login', formData).then(r => {
     const { user, token, tipo_usuario } = r.data
 
     console.log (r)

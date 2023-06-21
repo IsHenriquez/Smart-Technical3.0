@@ -13,6 +13,7 @@ const currentTheme = vuetifyTheme.current.value.colors
   <VRow class="match-height">
     <!-- 👉 Website analytics -->
     <VCol
+    
       cols="12"
       md="6"
     >

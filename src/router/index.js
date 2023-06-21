@@ -16,8 +16,10 @@ const router = createRouter({
         const userType = (userData && userData.id_user_type) ? userData.id_user_type : null
         if (userType === 1)
           return { name: 'dashboards-Inicio' }
-        if (userType === 2)
-          return { name: 'access-control' }
+        if (userType === 2) {
+          
+        
+          return { name: 'access-control' }}
         
         return { name: 'login', query: to.query }
       },

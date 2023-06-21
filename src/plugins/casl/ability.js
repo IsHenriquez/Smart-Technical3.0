@@ -1,10 +1,17 @@
 import { Ability } from '@casl/ability'
 
 export const initialAbility = [
-  {
+  /*{
     action: 'read',
     subject: 'Auth',
   },
+  {
+    action: 'read',
+    subject: 'AclDemo',
+  }*/{
+    action: 'manage',
+    subject: 'all',
+  }
 ]
 
 //  Read ability from localStorage

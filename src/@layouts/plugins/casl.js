@@ -1,4 +1,4 @@
-
+import ability from '@/plugins/casl/ability'
 /**
  * Returns ability result if ACL is configured or else just return true
  * We should allow passing string | undefined to can because for admin ability we omit defining action & subject
@@ -34,7 +34,7 @@ export const canViewNavMenuGroup = item => {
   return can(item.action, item.subject) && hasAnyVisibleChild
 }
 export const canNavigate = to => {
-  return true
+  //return true
 
-  //return to.matched.some(route => ability.can(route.meta.action, route.meta.subject))
+  return to.matched.some(route => ability.can(route.meta.action, route.meta.subject))
 }

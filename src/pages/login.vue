@@ -35,6 +35,10 @@ const rememberMe = ref(false)
 
 const login = () => {
   const formData = new FormData()
+  const update = ({
+    action: 'manage',
+    subject: 'all',
+  })
 
   formData.append('email', email.value)
   formData.append('password', password.value)
@@ -44,8 +48,8 @@ const login = () => {
     console.log (r)
 
     localStorage.setItem('userData', JSON.stringify(user))
-
-    //ability.update(userAbilities)
+    //localStorage.setItem('ability', JSON.stringify(update))
+    //ability.update(update)
     localStorage.setItem('accessToken', JSON.stringify(token))
     localStorage.setItem('tipo_usuario', JSON.stringify(tipo_usuario))
 

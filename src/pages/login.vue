@@ -10,8 +10,8 @@ import authV2MaskDark from '@images/pages/misc-mask-dark.png'
 import authV2MaskLight from '@images/pages/misc-mask-light.png'
 import technicalService from '@images/pages/technical_support_services.jpg'
 import {
-emailValidator,
-requiredValidator,
+  emailValidator,
+  requiredValidator,
 } from '@validators'
 import { VForm } from 'vuetify/components/VForm'
 
@@ -29,8 +29,8 @@ const errors = ref({
 })
 
 const refVForm = ref()
-const email = ref('')
-const password = ref('')
+const email = ref('isadora@smarttechnical.com')
+const password = ref('Isadora2023')
 const rememberMe = ref(false)
 
 const login = () => {
@@ -43,10 +43,10 @@ const login = () => {
 
     console.log (r)
 
-    localStorage.setItem('user', JSON.stringify(user))
+    localStorage.setItem('userData', JSON.stringify(user))
 
     //ability.update(userAbilities)
-    localStorage.setItem('token', JSON.stringify(token))
+    localStorage.setItem('accessToken', JSON.stringify(token))
     localStorage.setItem('tipo_usuario', JSON.stringify(tipo_usuario))
 
     // Redirect to `to` query if exist or redirect to index route

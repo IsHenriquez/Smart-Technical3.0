@@ -1,4 +1,3 @@
-import ability from '@/plugins/casl/ability'
 
 /**
  * Returns ability result if ACL is configured or else just return true
@@ -35,5 +34,7 @@ export const canViewNavMenuGroup = item => {
   return can(item.action, item.subject) && hasAnyVisibleChild
 }
 export const canNavigate = to => {
-  return to.matched.some(route => ability.can(route.meta.action, route.meta.subject))
+  return true
+
+  //return to.matched.some(route => ability.can(route.meta.action, route.meta.subject))
 }

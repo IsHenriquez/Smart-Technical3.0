@@ -2,7 +2,7 @@
   <div>
     <div>
       <VBtn prepend-icon="tabler-plus" @click="mostrarModal = true">
-        Agregar ticket
+        Agregar Usuario
       </VBtn>
     </div>
     <Transition name="fade">
@@ -17,12 +17,17 @@
                   <VRow>
                     <!-- 👉 Title -->
                     <VCol cols="12">
-                      <AppTextField label="Título" />
+                      <AppTextField label="Nombre" />
                     </VCol>
-
+                    <VCol cols="12">
+                      <AppTextField label="Apellido" />
+                    </VCol>
+                    <VCol cols="12">
+                      <AppTextField label="Email" />
+                    </VCol>
                     <!-- 👉 Calendar -->
                     <VCol cols="12">
-                      <AppSelect label="Prioridad" :items="desplegableItems" :item-title="item => item.label">
+                      <AppSelect label="Rol" :items="desplegableItems" :item-title="item => item.label">
                         <template #selection="{ item }">
                           <div class="align-center">
                             <VBadge :color="item.raw.color" inline dot class="pa-1 pb-2" />
@@ -30,11 +35,6 @@
                           </div>
                         </template>
                       </AppSelect>
-                    </VCol>
-
-                    <!-- 👉 Description -->
-                    <VCol cols="12">
-                      <AppTextarea label="Descripción" />
                     </VCol>
 
                     <!-- 👉 Form buttons -->
@@ -86,7 +86,7 @@
       <VCard class="confirmation">
         <VCardTitle>Confirmación</VCardTitle>
         <VCardText>
-          ¿Seguro que desea eliminar este ticket?
+          ¿Seguro que desea eliminar este usuario?
           <!-- Contenido del modal -->
         </VCardText>
 
@@ -100,9 +100,9 @@
     <!--Modal de boton ver usuario-->
     <VDialog v-model="isModalOpen2" @click:outside="closeModal">
       <VCard class="confirmation">
-        <VCardTitle>Detalle</VCardTitle>
+        <VCardTitle>Detalle del Usuario</VCardTitle>
         <VCardText>
-          ¿ver perfil?
+          ¿ver usuario?
           <!-- Contenido del modal -->
         </VCardText>
         <VCardActions>
@@ -115,7 +115,7 @@
     <!--Modal de boton editar usuario-->
     <VDialog v-model="isModalOpen3" @click:outside="closeModal">
       <VCard class="confirmation">
-        <VCardTitle>Editar perfil</VCardTitle>
+        <VCardTitle>Editar Usuario</VCardTitle>
         <VCardText>
           Usuario...
           <!-- Contenido del modal -->
@@ -181,7 +181,7 @@ export default {
 <style>
 .modal-overlay {
   position: fixed;
-  z-index: 9999;
+  z-index: 2000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -192,7 +192,7 @@ export default {
 .modal {
   padding: 20px;
   inline-size: 300px;
-  transform: translateX(-30%);
+  transform: translateX(-37%);
 }
 
 .modal-right {
@@ -214,16 +214,16 @@ export default {
 
 .tabla-estilizada th.columna,
 .tabla-estilizada td.columna {
-  inline-size: 10%;
+  inline-size: 15%;
 }
 
 .columna-id {
-  inline-size: 5%;
+  inline-size: 2%;
 }
 
 .tabla-estilizada th.acciones,
 .tabla-estilizada td.acciones {
-  inline-size: 10%;
+  inline-size: 5%;
 }
 
 .confirmation {

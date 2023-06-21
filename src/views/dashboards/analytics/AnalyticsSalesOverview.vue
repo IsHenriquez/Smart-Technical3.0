@@ -14,7 +14,7 @@
     </VCardText>
   </VCard>
 </template>
-
+ 
 <script>
 import { onMounted, ref } from 'vue'
 import { obtenerDatos } from './apiClima' // Asegúrate de ajustar la ruta al archivo api.js

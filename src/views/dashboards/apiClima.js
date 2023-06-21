@@ -7,6 +7,6 @@ export async function obtenerDatos() {
     return response.data
   } catch (error) {
     console.error(error)
-    throw error 
+    throw error
   }
 }

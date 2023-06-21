@@ -2,12 +2,12 @@ export default [
   
   {
     title: 'Tickets',
-    icon: { icon: 'tabler-mail' },
+    icon: { icon: 'tabler-ticket' },
     to: 'apps-ticket',
   },
   {
     title: 'Mapa',
-    icon: { icon: 'tabler-message-circle' },
+    icon: { icon: 'tabler-map' },
     to: 'apps-mapa',
   },
   {
@@ -23,18 +23,20 @@ export default [
   },
   {
     title: 'Vehículos',
-    icon: { icon: 'tabler-settings' },
+    icon: { icon: 'tabler-car' },
     to: 'apps-vehiculos',
   },
   {
     title: 'Grafana',
-    icon: { icon: 'tabler-file' },
+    icon: { icon: 'tabler-dashboard' },
     to: 'pages-grafana',
   },
   
   {
     title: 'Resultados NPS',
-    icon: { icon: 'tabler-square' },
+    icon: { icon: 'tabler-check',
+            icon: 'tabler-pencil',
+            icon: 'tabler-star'},
     to: 'pages-nps',
   },
 ]

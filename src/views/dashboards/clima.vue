@@ -3,7 +3,7 @@
     <div class="card">
       <p class="weather"></p>
       <svg xml:space="preserve" viewBox="0 0 100 100" height="50px" width="50px" y="0px" x="0px" id="Layer_1"
-        version="1.1" class="weather" :style="{ backgroundImage: `url('/${icono}')` }">
+        version="1.1" class="weather">
       </svg>
       <p class="temp">{{ estado }}</p>
       <p class="temp">{{ temp + "º" }}</p>
@@ -22,8 +22,8 @@
 </template>
 
 <script>
+import { computed, ref } from 'vue'
 import { obtenerDatos } from './apiClima'
-import { ref, computed } from 'vue'
 
 export default {
   setup() {
@@ -79,8 +79,9 @@ export default {
   block-size: 250px;
   cursor: pointer;
   inline-size: 220px;
+  inline-size: 100%;
   padding-block: 20px;
-  padding-inline: 10px;
+  padding-inline: 100px;
 }
 
 .weather {
@@ -92,7 +93,8 @@ export default {
 
 .temp {
   color: white;
-  font-size: 1.8em;
+  font-size: 1.5em;
+  transform: translateY(-15px);
 }
 
 .minmaxContainer {
@@ -112,6 +114,7 @@ export default {
   inline-size: 50%;
   padding-block: 0;
   padding-inline: 20px;
+  transform: translateY(-16px);
 }
 
 .max {

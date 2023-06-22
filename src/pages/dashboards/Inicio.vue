@@ -17,9 +17,9 @@ const currentTheme = vuetifyTheme.current.value.colors
       <AnalyticsWebsiteAnalytics />
     </VCol>
 
-    <!-- 👉 Sales Overview -->
-    <VCol cols="12" md="3" sm="6">
-      <AnalyticsSalesOverview />
+    <!-- 👉 Earning Reports Weekly Overview -->
+    <VCol cols="12" md="3">
+      <Clima />
     </VCol>
 
 
@@ -27,11 +27,6 @@ const currentTheme = vuetifyTheme.current.value.colors
     <!-- 👉 Earning Reports Weekly Overview -->
     <VCol cols="12" md="3">
       <AnalyticsEarningReportsWeeklyOverview />
-    </VCol>
-
-    <!-- 👉 Earning Reports Weekly Overview -->
-    <VCol cols="12" md="3">
-      <Clima />
     </VCol>
 
     <!-- 👉 Support Tracker -->

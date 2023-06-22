@@ -1,5 +1,5 @@
 <script setup>
-import panelesGrafana from "@/views/apps/panelesGrafana.vue"
+import panelesGrafana from "@/views/apps/panelesGrafana.vue";
 
 
 </script>
@@ -7,24 +7,25 @@ import panelesGrafana from "@/views/apps/panelesGrafana.vue"
 
 <template>
   <v-container fluid>
-  <v-layout>
-<h2 class="textlateral">
-  Paneles configurados actualmente
-</h2>
+    <v-layout>
+      <h2 class="textlateral">
+        Paneles configurados actualmente
+      </h2>
 
-    <panelesGrafana />
+      <panelesGrafana />
 
-    <v-main/>
-  </v-layout>
-</v-container>
+      <v-main />
+    </v-layout>
+  </v-container>
 </template>
 
 <style>
 .textlateral {
-  writing-mode: vertical-lr;
   text-align: center;
+  writing-mode: vertical-lr;
 }
+
 .down {
-  padding-top: 10px;
+  padding-block-start: 10px;
 }
 </style>

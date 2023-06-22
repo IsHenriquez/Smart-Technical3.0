@@ -130,10 +130,11 @@
 </template>
 
 <script>
-import { ref } from 'vue'
-
+import { ref } from 'vue';
 export default {
+
   setup() {
+
     const mostrarModal = ref(false)
 
     const desplegableItems = ref([
@@ -174,6 +175,9 @@ export default {
       openModal2,
       openModal3,
     }
+
+
+
   },
 }
 </script>

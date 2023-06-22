@@ -8,7 +8,7 @@ import panelesGrafana from "@/views/apps/panelesGrafana.vue"
 <template>
   <v-container fluid>
   <v-layout>
-<h2>
+<h2 class="textlateral">
   Paneles configurados actualmente
 </h2>
 
@@ -20,7 +20,7 @@ import panelesGrafana from "@/views/apps/panelesGrafana.vue"
 </template>
 
 <style>
-h2 {
+.textlateral {
   writing-mode: vertical-lr;
   text-align: center;
 }

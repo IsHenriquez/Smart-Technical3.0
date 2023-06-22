@@ -1,20 +1,20 @@
 <template>
   <div class="cardContainer">
     <div class="card">
-      <p class="weather"></p>
+      <p class="weather">{{ name }}</p>
       <svg xml:space="preserve" viewBox="0 0 100 100" height="50px" width="50px" y="0px" x="0px" id="Layer_1"
         version="1.1" class="weather">
       </svg>
       <p class="temp">{{ estado }}</p>
-      <p class="temp">{{ temp + "º" }}</p>
+      <p class="temp">{{ temp_c + "º" }}</p>
       <div class="minmaxContainer">
         <div class="min">
           <p class="minHeading">Min</p>
-          <p class="minTemp">{{ temp + "º" }}</p>
+          <p class="minTemp">{{ mintemp_c + "º" }}</p>
         </div>
         <div class="max">
           <p class="maxHeading">Max</p>
-          <p class="maxTemp">{{ temp + "º" }}</p>
+          <p class="maxTemp">{{ maxtemp_c + "º" }}</p>
         </div>
       </div>
     </div>
@@ -27,22 +27,28 @@ import { obtenerDatos } from './apiClima'
 
 export default {
   setup() {
-    const temp = ref(null)
+    const name = ref(null)
+    const temp_c = ref(null)
+    const maxtemp_c = ref(null)
+    const mintemp_c = ref(null)
     const estado = ref(null)
 
     obtenerDatos()
       .then(data => {
-        temp.value = data.Temp
-        estado.value = data.Estado
+        name.value = data.name
+        temp_c.value = data.temp_c
+        maxtemp_c.value = data.maxtemp_c
+        mintemp_c.value = data.mintemp_c
+        estado.value = data.estado
       })
       .catch(error => {
         console.error(error)
       })
 
     const icono = computed(() => {
-      if (temp.value < 10) {
+      if (temp_c.value < 10) {
         return 'lloviendo.png'; // Reemplaza con el nombre de tu imagen correspondiente al clima frío
-      } else if (temp.value < 20) {
+      } else if (temp_c.value < 20) {
         return 'nublado.png'; // Reemplaza con el nombre de tu imagen correspondiente al clima templado
       } else {
         return 'sol.png'; // Reemplaza con el nombre de tu imagen correspondiente al clima cálido
@@ -50,13 +56,17 @@ export default {
     })
 
     return {
-      temp,
+      name,
+      maxtemp_c,
+      mintemp_c,
+      temp_c,
       estado,
       icono,
     }
   },
 }
 </script>
+
 
 <style lang="scss">
 .cardContainer {
@@ -86,14 +96,15 @@ export default {
 
 .weather {
   color: rgb(197, 197, 197);
-  font-size: 0.7em;
+  font-size: 1em;
   font-weight: 500;
   letter-spacing: 1.2px;
 }
 
 .temp {
   color: white;
-  font-size: 1.5em;
+  font-size: 1.3em;
+  font-weight: 500;
   transform: translateY(-15px);
 }
 
@@ -114,7 +125,7 @@ export default {
   inline-size: 50%;
   padding-block: 0;
   padding-inline: 20px;
-  transform: translateY(-16px);
+  transform: translateY(-20px);
 }
 
 .max {
@@ -137,7 +148,7 @@ export default {
   font-size: 1em;
   font-weight: 900;
   transform: translateY(-8px);
-  transform: translateX(3px);
+  transform: translateX(1px);
 }
 
 .cardContainer::before {

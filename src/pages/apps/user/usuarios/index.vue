@@ -1,6 +1,5 @@
 <template>
   <div>
-    <div>
       <VBtn prepend-icon="tabler-plus" @click="mostrarModal = true">
         Agregar Usuario
       </VBtn>
@@ -53,89 +52,100 @@
     </Transition>
 
     <div>
-      <table class="tabla-estilizada">
-        <thead>
-          <tr>
-            <th class="columna-id">ID</th>
-            <th class="columna">Nombre</th>
-            <th class="columna">Apellido</th>
-            <th class="columna">Email</th>
-            <th class="columna">Rol</th>
-            <th class="columna acciones">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Dato 0</td>
-            <td>Dato 1</td>
-            <td>Dato 2</td>
-            <td>Dato 3</td>
-            <td>Dato 4</td>
-            <td>
-              <VBtn density="compact" icon="mdi-eye" @click="openModal2" />
-              <VBtn density="compact" icon="mdi-pencil" @click="openModal3" />
-              <VBtn density="compact" icon="mdi-delete" @click="openModal" />
-            </td>
-          </tr>
+      <div class="table-container">
+        <table class="tabla-estilizada">
+          <thead>
+            <tr>
+              <th class="columna-id">ID</th>
+              <th class="columna">Nombre</th>
+              <th class="columna">Apellido</th>
+              <th class="columna">Email</th>
+              <th class="columna">Rol</th>
+              <th class="columna acciones">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <template v-if="isLoading">
+              <tr>
+                <td colspan="6">Cargando usuarios...</td>
+              </tr>
+            </template>
+            <template v-else>
+              <tr v-for="user in users" :key="user.id">
+                <td>{{ user.id }}</td>
+                <td>{{ user.name }}</td>
+                <td>{{ user.last_name }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.id_user_type }}</td>
+                <td>
+                  <VBtn density="compact" icon="mdi-eye" @click="openModal2" />
+                  <VBtn density="compact" icon="mdi-pencil" @click="openModal3" />
+                  <VBtn density="compact" icon="mdi-delete" @click="openModal" />
+                </td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+      <VDialog v-model="isModalOpen" @click:outside="closeModal">
+        <VCard class="confirmation">
+          <VCardTitle>Confirmación</VCardTitle>
+          <VCardText>
+            ¿Seguro que desea eliminar este usuario?
+            <!-- Contenido del modal -->
+          </VCardText>
 
-          <!-- Agrega más filas según sea necesario -->
-        </tbody>
-      </table>
+          <VCardActions>
+            <VBtn @click="closeModal">Confirmar</VBtn>
+            <VBtn @click="closeModal">Cerrar</VBtn>
+          </VCardActions>
+        </VCard>
+      </VDialog>
+
+      <!--Modal de boton ver usuario-->
+      <VDialog v-model="isModalOpen2" @click:outside="closeModal">
+        <VCard class="confirmation">
+          <VCardTitle>Detalle del Usuario</VCardTitle>
+          <VCardText>
+            ¿ver usuario?
+            <!-- Contenido del modal -->
+          </VCardText>
+          <VCardActions>
+            <VBtn @click="closeModal">Confirmar</VBtn>
+            <VBtn @click="closeModal">Cerrar</VBtn>
+          </VCardActions>
+        </VCard>
+      </VDialog>
+
+      <!--Modal de boton editar usuario-->
+      <VDialog v-model="isModalOpen3" @click:outside="closeModal">
+        <VCard class="confirmation">
+          <VCardTitle>Editar Usuario</VCardTitle>
+          <VCardText>
+            Usuario...
+            <!-- Contenido del modal -->
+          </VCardText>
+          <VCardActions>
+            <VBtn @click="closeModal">Confirmar</VBtn>
+            <VBtn @click="closeModal">Cerrar</VBtn>
+          </VCardActions>
+        </VCard>
+      </VDialog>
     </div>
-    <VDialog v-model="isModalOpen" @click:outside="closeModal">
-      <VCard class="confirmation">
-        <VCardTitle>Confirmación</VCardTitle>
-        <VCardText>
-          ¿Seguro que desea eliminar este usuario?
-          <!-- Contenido del modal -->
-        </VCardText>
-
-        <VCardActions>
-          <VBtn @click="closeModal">Confirmar</VBtn>
-          <VBtn @click="closeModal">Cerrar</VBtn>
-        </VCardActions>
-      </VCard>
-    </VDialog>
-
-    <!--Modal de boton ver usuario-->
-    <VDialog v-model="isModalOpen2" @click:outside="closeModal">
-      <VCard class="confirmation">
-        <VCardTitle>Detalle del Usuario</VCardTitle>
-        <VCardText>
-          ¿ver usuario?
-          <!-- Contenido del modal -->
-        </VCardText>
-        <VCardActions>
-          <VBtn @click="closeModal">Confirmar</VBtn>
-          <VBtn @click="closeModal">Cerrar</VBtn>
-        </VCardActions>
-      </VCard>
-    </VDialog>
-
-    <!--Modal de boton editar usuario-->
-    <VDialog v-model="isModalOpen3" @click:outside="closeModal">
-      <VCard class="confirmation">
-        <VCardTitle>Editar Usuario</VCardTitle>
-        <VCardText>
-          Usuario...
-          <!-- Contenido del modal -->
-        </VCardText>
-        <VCardActions>
-          <VBtn @click="closeModal">Confirmar</VBtn>
-          <VBtn @click="closeModal">Cerrar</VBtn>
-        </VCardActions>
-      </VCard>
-    </VDialog>
-  </div>
 </template>
 
 <script>
-import { ref } from 'vue';
+import axios from 'axios';
+import { onMounted, ref } from 'vue';
+
+
 export default {
 
   setup() {
 
     const mostrarModal = ref(false)
+    const users = ref([]);
+    const isLoading = ref(false);
 
     const desplegableItems = ref([
       { id: 1, label: 'Baja' },
@@ -163,8 +173,20 @@ export default {
         isModalOpen3.value = false
     }
 
+    onMounted(async () => {
+      isLoading.value = true;
+      try {
+        const response = await axios.get('https://smarttechnicalcl.000webhostapp.com/api/user');
+        users.value = response.data.data;
+      } catch (error) {
+        console.error(error);
+      }
+      isLoading.value = false;
+    });
 
     return {
+      users,
+      isLoading,
       mostrarModal,
       desplegableItems,
       isModalOpen,

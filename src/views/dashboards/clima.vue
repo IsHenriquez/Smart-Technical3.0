@@ -41,11 +41,11 @@ export default {
 
     const icono = computed(() => {
       if (temp.value < 10) {
-        return './nublado.png'; // Reemplaza con el nombre de tu imagen correspondiente al clima frío
+        return 'lloviendo.png'; // Reemplaza con el nombre de tu imagen correspondiente al clima frío
       } else if (temp.value < 20) {
         return 'nublado.png'; // Reemplaza con el nombre de tu imagen correspondiente al clima templado
       } else {
-        return 'nublado.png'; // Reemplaza con el nombre de tu imagen correspondiente al clima cálido
+        return 'sol.png'; // Reemplaza con el nombre de tu imagen correspondiente al clima cálido
       }
     })
 

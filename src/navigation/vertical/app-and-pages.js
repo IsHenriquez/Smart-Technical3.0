@@ -34,9 +34,7 @@ export default [
   
   {
     title: 'Resultados NPS',
-    icon: { icon: 'tabler-check',
-            icon: 'tabler-pencil',
-            icon: 'tabler-star'},
+    icon: { icon: 'tabler-star'},
     to: 'pages-nps',
   },
 ]

@@ -29,16 +29,12 @@ const errors = ref({
 })
 
 const refVForm = ref()
-const email = ref('isadora@smarttechnical.com')
-const password = ref('Isadora2023')
+const email = ref('amanda@smarttechnical.com')
+const password = ref('Amanda2023')
 const rememberMe = ref(false)
 
 const login = () => {
   const formData = new FormData()
-  const update = ({
-    action: 'manage',
-    subject: 'all',
-  })
 
   formData.append('email', email.value)
   formData.append('password', password.value)
@@ -52,6 +48,9 @@ const login = () => {
     //ability.update(update)
     localStorage.setItem('accessToken', JSON.stringify(token))
     localStorage.setItem('tipo_usuario', JSON.stringify(tipo_usuario))
+
+    
+
 
     // Redirect to `to` query if exist or redirect to index route
     router.replace(route.query.to ? String(route.query.to) : '/')

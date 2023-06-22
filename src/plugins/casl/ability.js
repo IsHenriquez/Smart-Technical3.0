@@ -6,8 +6,8 @@ export const initialAbility = [
     subject: 'Auth',
   },
   {
-    action: 'read',
-    subject: 'AclDemo',
+    action: 'personalized',
+    subject: 'secretary'
   }*/{
     action: 'manage',
     subject: 'all',

@@ -1,7 +1,7 @@
 <template>
   <div>
     <div>
-      <VBtn prepend-icon="tabler-plus" @click="mostrarModal = true">
+      <VBtn v-if="usuarioAdmin === true" prepend-icon="tabler-plus" @click="mostrarModal = true">
         Agregar Vehiculo
       </VBtn>
     </div>
@@ -62,8 +62,8 @@
             <td>Dato 4</td>
             <td>
               <VBtn density="compact" icon="mdi-eye" @click="openModal2" />
-              <VBtn density="compact" icon="mdi-pencil" @click="openModal3" />
-              <VBtn density="compact" icon="mdi-delete" @click="openModal" />
+              <VBtn v-if="usuarioSecr || usuarioAdmin === true" density="compact" icon="mdi-pencil" @click="openModal3" />
+              <VBtn v-if="usuarioAdmin === true" density="compact" icon="mdi-delete" @click="openModal" />
             </td>
           </tr>
 
@@ -145,6 +145,26 @@ export default {
         isModalOpen3.value = false
     }
 
+    var usuarioSecr = false
+    var usuarioTec = false
+    var usuarioAdmin = false
+
+    const userData = JSON.parse(localStorage.getItem('userData') || '{}')
+        const userType = (userData && userData.id_user_type) ? userData.id_user_type : null
+
+    if(userType === 3){
+      usuarioSecr = true
+    }
+
+    else if (userType === 2){
+      usuarioTec = true
+    }
+
+    else if (userType === 1){
+      usuarioAdmin = true
+    }
+
+
 
     return {
       mostrarModal,
@@ -155,6 +175,9 @@ export default {
       closeModal,
       openModal2,
       openModal3,
+      usuarioSecr,
+      usuarioTec,
+      usuarioAdmin
     }
   },
 }

@@ -1,0 +1,38 @@
+<script setup>
+import { useTheme } from 'vuetify'
+import dash1 from "@/assets/images/grafana/dash1.png"
+
+const vuetifyTheme = useTheme()
+</script>
+
+<template>
+  <VCard class="card1">
+    <VCardItem class="pb-sm-0">
+      <VCardText class="pa-1 textoCarta">
+        Load
+      </VCardText>
+
+      <VImg 
+            width="400"
+            :src="dash1"
+            class="card-image"
+            
+          />
+    
+    </VCardItem>
+  </VCard>
+</template>
+
+<style>
+.textoCarta{
+  position: relative;
+  bottom:10px
+}
+
+.card-image{
+  position: relative;
+  bottom: 10px;
+
+}
+
+</style>

@@ -1,30 +1,63 @@
+
 <script setup>
-import panelesGrafana from "@/views/apps/panelesGrafana.vue"
+import panel1 from "@/views/apps/grafana/panel1.vue"
+import panel2 from "@/views/apps/grafana/panel2.vue"
+import panel3 from "@/views/apps/grafana/panel3.vue"
+import panel4 from "@/views/apps/grafana/panel4.vue"
+import panel5 from "@/views/apps/grafana/panel5.vue"
+import panel6 from "@/views/apps/grafana/panel6.vue"
+import columna from "@/views/apps/grafana/columna.vue"
+
 
 
 </script>
 
-
 <template>
-  <v-container fluid>
-  <v-layout>
-<h2 class="textlateral">
-  Paneles configurados actualmente
-</h2>
 
-    <panelesGrafana />
+<VRow class="match-height">
+    <!-- 👉 Website analytics -->
+    <VCol cols="12" md="6" sm="6">
+      <panel1 />
+    </VCol>
 
-    <v-main/>
-  </v-layout>
-</v-container>
+    <!-- 👉 Sales Overview -->
+    <VCol cols="12" md="6" sm="6">
+      <panel2 />
+    </VCol>
+
+    <!-- 👉 Earning Reports Weekly Overview -->
+    <VCol cols="12" md="6" sm="6">
+      <panel3 />
+    </VCol>
+
+    <!-- 👉 Earning Reports Weekly Overview -->
+    <VCol cols="12" md="6" sm="6">
+      <panel4 />
+    </VCol>
+
+    <VCol cols="12" md="6" sm="6">
+      <panel5 />
+    </VCol>
+
+    <VCol cols="12" md="6" sm="6">
+      <panel6 />
+    </VCol>
+
+    <VCol cols="20" md="20" sm="12">
+      <columna />
+    </VCol>
+  </VRow>
 </template>
 
+
 <style>
-.textlateral {
-  writing-mode: vertical-lr;
-  text-align: center;
-}
+
 .down {
   padding-top: 10px;
 }
+
+.textTitleCard{
+  padding-left: 10px;
+}
+
 </style>

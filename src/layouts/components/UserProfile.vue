@@ -10,7 +10,7 @@ const userData = JSON.parse(localStorage.getItem('userData') || 'null')
 const logout = () => {
 
   // Remove "userData" from localStorage
-  localStorage.removeItem('userData')
+  localStorage.removeItem('tipo_usuario')
 
   // Remove "accessToken" from localStorage
   localStorage.removeItem('accessToken')
@@ -25,7 +25,7 @@ const logout = () => {
 }
 
 const userProfileList = [
-  { type: 'divider' },
+  
   
   {
     type: 'navItem',
@@ -67,39 +67,7 @@ const userProfileList = [
         offset="14px"
       >
         <VList>
-          <VListItem>
-            <template #prepend>
-              <VListItemAction start>
-                <VBadge
-                  dot
-                  location="bottom right"
-                  offset-x="3"
-                  offset-y="3"
-                  color="success"
-                  bordered
-                >
-                  <VAvatar
-                    :color="!(userData && userData.avatar) ? 'primary' : undefined"
-                    :variant="!(userData && userData.avatar) ? 'tonal' : undefined"
-                  >
-                    <VImg
-                      v-if="userData && userData.avatar"
-                      :src="userData.avatar"
-                    />
-                    <VIcon
-                      v-else
-                      icon="tabler-user"
-                    />
-                  </VAvatar>
-                </VBadge>
-              </VListItemAction>
-            </template>
-
-            <VListItemTitle class="font-weight-medium">
-              {{ userData.fullName || userData.username }}
-            </VListItemTitle>
-            <VListItemSubtitle>{{ userData.role }}</VListItemSubtitle>
-          </VListItem>
+          
 
           <PerfectScrollbar :options="{ wheelPropagation: false }">
             <template

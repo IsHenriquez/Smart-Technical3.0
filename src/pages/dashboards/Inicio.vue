@@ -41,3 +41,9 @@ const currentTheme = vuetifyTheme.current.value.colors
 <style lang="scss">
 @use "@core/scss/template/libs/apex-chart.scss";
 </style>
+
+<route lang="yaml">
+  meta:
+    action: personalized
+    subject: secretary
+  </route>

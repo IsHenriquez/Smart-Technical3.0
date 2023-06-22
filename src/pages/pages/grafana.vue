@@ -15,22 +15,21 @@ import columna from "@/views/apps/grafana/columna.vue"
 <template>
 
 <VRow class="match-height">
-    <!-- 👉 Website analytics -->
+
     <VCol cols="12" md="6" sm="6">
       <panel1 />
     </VCol>
 
-    <!-- 👉 Sales Overview -->
     <VCol cols="12" md="6" sm="6">
       <panel2 />
     </VCol>
 
-    <!-- 👉 Earning Reports Weekly Overview -->
+
     <VCol cols="12" md="6" sm="6">
       <panel3 />
     </VCol>
 
-    <!-- 👉 Earning Reports Weekly Overview -->
+  
     <VCol cols="12" md="6" sm="6">
       <panel4 />
     </VCol>

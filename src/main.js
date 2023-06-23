@@ -15,6 +15,7 @@ import GMaps from 'gmaps'
 import { createPinia } from 'pinia'
 import { createApp } from 'vue'
 
+
 loadFonts()
 
 

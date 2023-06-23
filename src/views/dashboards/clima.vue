@@ -5,7 +5,7 @@
       <svg xml:space="preserve" viewBox="0 0 100 100" height="50px" width="50px" y="0px" x="0px" id="Layer_1"
         version="1.1" class="weather">
       </svg>
-      <p class="temp">{{ estado }}</p>
+      <p class="temp2">{{ estado }}</p>
       <p class="temp">{{ temp_c + "º" }}</p>
       <div class="minmaxContainer">
         <div class="min">
@@ -95,17 +95,28 @@ export default {
 }
 
 .weather {
+  block-size: 0;
   color: rgb(197, 197, 197);
   font-size: 1em;
-  font-weight: 500;
+  font-weight: 00;
   letter-spacing: 1.2px;
+  transform: translateY(-11px);
 }
 
 .temp {
   color: white;
-  font-size: 1.3em;
+  font-size: 1.4em;
   font-weight: 500;
-  transform: translateY(-15px);
+  transform: translateY(-11px);
+}
+
+.temp2 {
+  color: white;
+  font-size: 1.1em;
+  font-weight: 500;
+  letter-spacing: 2.9px;
+  transform: translateY(-3px);
+  transform: translateX(10px);
 }
 
 .minmaxContainer {

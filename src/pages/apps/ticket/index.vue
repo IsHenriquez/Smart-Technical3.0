@@ -6,7 +6,7 @@
       </VBtn>
     </div>
     <Transition name="fade">
-      
+
       <div v-if="mostrarModal" class="modal-overlay">
         <div class="modal modal-right">
           <!-- Contenido del formulario aquí -->
@@ -31,6 +31,21 @@
                           </div>
                         </template>
                       </AppSelect>
+                    </VCol>
+
+                    <VCol cols="12">
+                      <AppSelect label="Tipo Ticket" :items="desplegable" :item-title="item => item.label">
+                        <template #selection="{ item }">
+                          <div class="align-center">
+                            <VBadge :color="item.raw.color" inline dot class="pa-1 pb-2" />
+                            <span>{{ item.raw.label }}</span>
+                          </div>
+                        </template>
+                      </AppSelect>
+                    </VCol>
+
+                    <VCol cols="12">
+                      <AppTextField label="Fecha Ticket" />
                     </VCol>
 
                     <!-- 👉 Description -->
@@ -59,9 +74,10 @@
         <thead>
           <tr>
             <th class="columna-id">ID</th>
-            <th class="columna">Publicante</th>
             <th class="columna">Titulo</th>
+            <th class="columna">Estado</th>
             <th class="columna">Prioridad</th>
+            <th class="columna">TIPO TICKET</th>
             <th class="columna">Fecha</th>
             <th class="columna acciones">Acciones</th>
           </tr>
@@ -75,15 +91,16 @@
           <template v-else>
             <tr v-for="ticket in tickets" :key="ticket.id">
               <td>{{ ticket.id }}</td>
-              <td>{{ ticket.name }}</td>
-              <td>{{ ticket.last_name }}</td>
-              <td>{{ ticket.email }}</td>
-              <td>{{ ticket.phone }}</td>
+              <td>{{ ticket.title }}</td>
+              <td>{{ ticket.id_status }}</td>
+              <td>{{ ticket.id_priority }}</td>
+              <td>{{ ticket.id_type }}</td>
+              <td>{{ ticket.fecha_realizar_servicio }}</td>
               <td>
-                <VBtn density="compact" icon="mdi-eye" @click="openModal2" />
+                <VBtn density="compact" icon="mdi-eye" @click="openModal2(ticket)" />
                 <VBtn density="compact" icon="mdi-pencil" @click="openModal3" />
                 <VBtn v-if="usuarioSecr || usuarioAdmin === true" density="compact" icon="mdi-delete"
-                  @click="openModal" />
+                  @click="openModal(ticket.id)" />
               </td>
             </tr>
           </template>
@@ -106,17 +123,48 @@
       </VCard>
     </VDialog>
 
-    <!--Modal de boton ver usuario-->
+    <!--Modal de boton ver ticket-->
     <VDialog v-model="isModalOpen2" @click:outside="closeModal">
-      <VCard class="confirmation">
-        <VCardTitle>Detalle del Ticket</VCardTitle>
+      <VCard class="confirmation3">
+        <VCardTitle style="text-align: center;">Detalle del Ticket</VCardTitle>
         <VCardText>
-          <p>ticket de prueba</p>
-          <!-- Contenido del modal -->
+          <v-table>
+            <tbody>
+              <tr class="tableUser">
+                <th scope="row">ID</th>
+                <td>{{ ": " + selectedTicket.id }}</td>
+              </tr>
+              <tr>
+                <th scope="row">Titulo</th>
+                <td>{{ ": " + selectedTicket.title }}</td>
+              </tr>
+
+              <tr>
+                <th scope="row">Estado</th>
+                <td>{{ ": " + selectedTicket.id_status }}</td>
+              </tr>
+              <tr>
+                <th scope="row">Prioridad</th>
+                <td>{{ ": " + selectedTicket.id_priority }}</td>
+              </tr>
+              <tr>
+                <th scope="row">Tipo Ticket</th>
+                <td>{{ ": " + selectedTicket.id_type }}</td>
+              </tr>
+              <tr>
+                <th scope="row">Fecha de ticket</th>
+                <td>{{ ": " + selectedTicket.fecha_realizar_servicio }}</td>
+              </tr>
+              <tr>
+                <th scope="row">Descripcion</th>
+                <td>{{ ": " + selectedTicket.description }}</td>
+              </tr>
+              <!-- Agrega más filas según los campos de datos que desees mostrar -->
+            </tbody>
+          </v-table>
         </VCardText>
         <VCardActions>
-          <VBtn @click="closeModal">Confirmar</VBtn>
-          <VBtn @click="closeModal">Cerrar</VBtn>
+          <VBtn @click="closeModal" style="transform: translateX(590%);">Cerrar</VBtn>
         </VCardActions>
       </VCard>
     </VDialog>
@@ -139,22 +187,29 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import axios from 'axios';
+import { onMounted, ref } from 'vue';
 
 export default {
 
   setup() {
+    const ticket = ref([]);
     const mostrarModal = ref(false)
     const data1 = ref([]);
     const data2 = ref([]);
     const data3 = ref([]);
     const isLoading = ref(false);
     const tickets = ref([]);
+    const selectedTicket = ref(null);
 
     const desplegableItems = ref([
       { id: 1, label: 'Baja' },
       { id: 2, label: 'Media' },
       { id: 3, label: 'Alta' },
+    ])
+    const desplegable = ref([
+      { id: 1, label: 'Ticket' },
+      { id: 2, label: 'Cita' },
     ])
 
     const isModalOpen = ref(false)
@@ -197,7 +252,22 @@ export default {
     }
 
 
+    onMounted(async () => {
+      isLoading.value = true;
+      try {
+        const response = await axios.get('https://smarttechnicalcl.000webhostapp.com/api/ticket');
+        tickets.value = response.data.data;
+      } catch (error) {
+        console.error(error);
+      }
+      isLoading.value = false;
+    });
+
+
     return {
+      selectedTicket,
+      desplegable,
+      ticket,
       tickets,
       mostrarModal,
       desplegableItems,
@@ -214,7 +284,7 @@ export default {
       data1,
       data2,
       data3,
-      isLoading
+      isLoading,
     }
   },
 }
@@ -232,8 +302,8 @@ export default {
 }
 
 .modal {
-  padding: 20px;
-  inline-size: 300px;
+  padding: 30px;
+  inline-size: 450px;
   transform: translateX(-37%);
 }
 
@@ -242,7 +312,11 @@ export default {
 }
 
 .columna-id {
-  inline-size: 2%;
+  inline-size: 3%;
+}
+
+.columna {
+  inline-size: 5%;
 }
 
 .confirmation {
@@ -255,6 +329,24 @@ export default {
   max-inline-size: 700px;
   transform: translateY(-29%);
   transform: translateX(23%);
+}
+
+.confirmation3 {
+  block-size: 420px;
+  inline-size: 500px;
+  inset-block-start: 50%;
+  margin-inline: auto;
+  transform: translateY(-29%);
+  transform: translateX(2%);
+}
+
+.confirmation2 {
+  align-items: center;
+  block-size: 170px;
+  inset-block-start: 50%;
+  margin-inline: auto;
+  transform: translateY(-29%);
+  transform: translateX(2%);
 }
 
 .fade-enter-active,

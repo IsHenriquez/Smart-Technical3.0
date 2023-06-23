@@ -14,6 +14,8 @@ import '@styles/styles.scss'
 import GMaps from 'gmaps'
 import { createPinia } from 'pinia'
 import { createApp } from 'vue'
+import VCalendar from 'v-calendar';
+import 'v-calendar/style.css';
 
 
 loadFonts()
@@ -32,6 +34,8 @@ app.use(i18n)
 app.use(abilitiesPlugin, ability, {
   useGlobalProperties: true,
 })
+app.use(VCalendar, {})
+
 
 app.config.globalProperties.$gmaps = GMaps
 

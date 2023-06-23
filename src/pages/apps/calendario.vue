@@ -1,163 +1,55 @@
-<script setup>
-import FullCalendar from '@fullcalendar/vue3'
-import {
-  blankEvent,
-  useCalendar,
-} from '@/views/apps/calendar/useCalendar'
-import { useCalendarStore } from '@/views/apps/calendar/useCalendarStore'
-import { useResponsiveLeftSidebar } from '@core/composable/useResponsiveSidebar'
-
-// Components
-import CalendarEventHandler from '@/views/apps/calendar/CalendarEventHandler.vue'
-
-const store = useCalendarStore()
-
-// 👉 Event
-const event = ref(structuredClone(blankEvent))
-const isEventHandlerSidebarActive = ref(false)
-
-watch(isEventHandlerSidebarActive, val => {
-  if (!val)
-    event.value = structuredClone(blankEvent)
-})
-
-const { isLeftSidebarOpen } = useResponsiveLeftSidebar()
-const { refCalendar, calendarOptions, addEvent, updateEvent, removeEvent, jumpToDate } = useCalendar(event, isEventHandlerSidebarActive, isLeftSidebarOpen)
-
-// 👉 Check all
-const checkAll = computed({
-  get: () => store.selectedCalendars.length === store.availableCalendars.length,
-  set: val => {
-    if (val)
-      store.selectedCalendars = store.availableCalendars.map(i => i.label)
-    else if (store.selectedCalendars.length === store.availableCalendars.length)
-      store.selectedCalendars = []
-  },
-})
-</script>
-
 <template>
-  <div>
-    <VCard>
-      <!-- `z-index: 0` Allows overlapping vertical nav on calendar -->
-      <VLayout style="z-index: 0;">
-        <!-- 👉 Navigation drawer -->
-        <VNavigationDrawer
-          v-model="isLeftSidebarOpen"
-          width="292"
-          absolute
-          touchless
-          location="start"
-          class="calendar-add-event-drawer"
-          :temporary="$vuetify.display.mdAndDown"
-        >
-          <div style="margin: 1.4rem;">
-            <VBtn
-              block
-              prepend-icon="tabler-plus"
-              @click="isEventHandlerSidebarActive = true"
-            >
-              Add event
-            </VBtn>
-          </div>
+  <div class="flex flex-col items-center">
+    <v-combobox
+      label="Combobox"
+      :items="['California', 'Colorado', 'Florida', 'Georgia', 'Texas', 'Wyoming']"
+      variant="outlined"
+    ></v-combobox>
 
-          <VDivider />
+    <v-checkbox
+      v-model="checkbox1"
+      label="Checkbox Rojo"
+      color="error"
+      @change="handleCheckbox1Change"
+    ></v-checkbox>
 
-          <div class="d-flex align-center justify-center pa-2 mb-3">
-            <AppDateTimePicker
-              :model-value="new Date().toJSON().slice(0, 10)"
-              :config="{ inline: true }"
-              class="calendar-date-picker"
-              @input="jumpToDate($event.target.value)"
-            />
-          </div>
+    <v-checkbox
+      v-model="checkbox2"
+      label="Checkbox Azul"
+      color="info"
+      @change="handleCheckbox2Change"
+    ></v-checkbox>
 
-          <VDivider />
-          <div class="pa-7">
-            <p class="text-sm text-uppercase text-disabled mb-3">
-              FILTER
-            </p>
-
-            <div class="d-flex flex-column calendars-checkbox">
-              <VCheckbox
-                v-model="checkAll"
-                label="View all"
-              />
-              <VCheckbox
-                v-for="calendar in store.availableCalendars"
-                :key="calendar.label"
-                v-model="store.selectedCalendars"
-                :value="calendar.label"
-                :color="calendar.color"
-                :label="calendar.label"
-              />
-            </div>
-          </div>
-        </VNavigationDrawer>
-
-        <VMain>
-          <VCard flat>
-            <FullCalendar
-              ref="refCalendar"
-              :options="calendarOptions"
-            />
-          </VCard>
-        </VMain>
-      </VLayout>
-    </VCard>
-    <CalendarEventHandler
-      v-model:isDrawerOpen="isEventHandlerSidebarActive"
-      :event="event"
-      @add-event="addEvent"
-      @update-event="updateEvent"
-      @remove-event="removeEvent"
-    />
+    <div class="space-y-2">
+      <div class="flex items-center space-x-2">
+        <input id="darkmode" type="checkbox" v-model="isDark" />
+        <label for="darkmode"> Dark Mode </label>
+      </div>
+      <VCalendar expanded :is-dark="isDark" />
+    </div>
   </div>
 </template>
 
-<style lang="scss">
-@use "@core/scss/template/libs/full-calendar";
+<script setup>
+import { ref } from 'vue';
 
-.calendars-checkbox {
-  .v-label {
-    color: rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity));
-    opacity: var(--v-high-emphasis-opacity);
+const isDark = ref(false);
+const checkbox1 = ref(false);
+const checkbox2 = ref(false);
+
+function handleCheckbox1Change() {
+  if (checkbox1.value) {
+    checkbox2.value = false;
   }
 }
 
-.calendar-add-event-drawer {
-  &.v-navigation-drawer:not(.v-navigation-drawer--temporary) {
-    border-end-start-radius: 0.375rem;
-    border-start-start-radius: 0.375rem;
+function handleCheckbox2Change() {
+  if (checkbox2.value) {
+    checkbox1.value = false;
   }
 }
+</script>
 
-.calendar-date-picker {
-  display: none;
-
-  +.flatpickr-input {
-    +.flatpickr-calendar.inline {
-      border: none;
-      box-shadow: none;
-
-      .flatpickr-months {
-        border-block-end: none;
-      }
-    }
-  }
-
-  & ~ .flatpickr-calendar .flatpickr-weekdays {
-    margin-block: 0 4px;
-  }
-}
-</style>
-
-<style lang="scss" scoped>
-.v-layout {
-  overflow: visible !important;
-
-  .v-card {
-    overflow: visible;
-  }
-}
+<style>
+/* Agrega estilos personalizados si es necesario */
 </style>

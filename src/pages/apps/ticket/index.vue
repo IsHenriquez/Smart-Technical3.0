@@ -6,6 +6,7 @@
       </VBtn>
     </div>
     <Transition name="fade">
+      
       <div v-if="mostrarModal" class="modal-overlay">
         <div class="modal modal-right">
           <!-- Contenido del formulario aquí -->
@@ -53,7 +54,8 @@
     </Transition>
 
     <div>
-      <table class="tabla-estilizada">
+      <br>
+      <v-table>
         <thead>
           <tr>
             <th class="columna-id">ID</th>
@@ -65,26 +67,30 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>Dato 0</td>
-            <td>Dato 1</td>
-            <td>Dato 2</td>
-            <td>Dato 3</td>
-            <td>Dato 4</td>
-            <td>
-              <VBtn density="compact" icon="mdi-eye" @click="openModal2" />
-              <VBtn density="compact" icon="mdi-pencil" @click="openModal3" />
-
-                  <VBtn v-if="usuarioSecr || usuarioAdmin === true" density="compact" icon="mdi-delete" @click="openModal" />
-
-
-            </td>
-          </tr>
-
-          <!-- Agrega más filas según sea necesario -->
+          <template v-if="isLoading">
+            <tr>
+              <td colspan="6">Cargando Tickets...</td>
+            </tr>
+          </template>
+          <template v-else>
+            <tr v-for="ticket in tickets" :key="ticket.id">
+              <td>{{ ticket.id }}</td>
+              <td>{{ ticket.name }}</td>
+              <td>{{ ticket.last_name }}</td>
+              <td>{{ ticket.email }}</td>
+              <td>{{ ticket.phone }}</td>
+              <td>
+                <VBtn density="compact" icon="mdi-eye" @click="openModal2" />
+                <VBtn density="compact" icon="mdi-pencil" @click="openModal3" />
+                <VBtn v-if="usuarioSecr || usuarioAdmin === true" density="compact" icon="mdi-delete"
+                  @click="openModal" />
+              </td>
+            </tr>
+          </template>
         </tbody>
-      </table>
+      </v-table>
     </div>
+
     <VDialog v-model="isModalOpen" @click:outside="closeModal">
       <VCard class="confirmation">
         <VCardTitle>Confirmación</VCardTitle>
@@ -133,16 +139,17 @@
 </template>
 
 <script>
-import { ref } from 'vue'
-
+import { ref } from 'vue';
 
 export default {
 
   setup() {
     const mostrarModal = ref(false)
-
-    
-    
+    const data1 = ref([]);
+    const data2 = ref([]);
+    const data3 = ref([]);
+    const isLoading = ref(false);
+    const tickets = ref([]);
 
     const desplegableItems = ref([
       { id: 1, label: 'Baja' },
@@ -170,28 +177,28 @@ export default {
         isModalOpen3.value = false
     }
 
-
     var usuarioSecr = false
     var usuarioTec = false
     var usuarioAdmin = false
 
     const userData = JSON.parse(localStorage.getItem('userData') || '{}')
-        const userType = (userData && userData.id_user_type) ? userData.id_user_type : null
+    const userType = (userData && userData.id_user_type) ? userData.id_user_type : null
 
-    if(userType === 3){
+    if (userType === 3) {
       usuarioSecr = true
     }
 
-    else if (userType === 2){
+    else if (userType === 2) {
       usuarioTec = true
     }
 
-    else if (userType === 1){
+    else if (userType === 1) {
       usuarioAdmin = true
     }
 
 
     return {
+      tickets,
       mostrarModal,
       desplegableItems,
       isModalOpen,
@@ -203,8 +210,11 @@ export default {
       openModal3,
       usuarioSecr,
       usuarioTec,
-      usuarioAdmin
-
+      usuarioAdmin,
+      data1,
+      data2,
+      data3,
+      isLoading
     }
   },
 }
@@ -231,31 +241,8 @@ export default {
   margin-inline-start: 20%;
 }
 
-.tabla-estilizada {
-  border-collapse: collapse;
-  inline-size: 100%;
-  margin-block-start: 15px;
-}
-
-.tabla-estilizada th,
-.tabla-estilizada td {
-  padding: 8px;
-  border: 1px solid black;
-  text-align: center;
-}
-
-.tabla-estilizada th.columna,
-.tabla-estilizada td.columna {
-  inline-size: 15%;
-}
-
 .columna-id {
   inline-size: 2%;
-}
-
-.tabla-estilizada th.acciones,
-.tabla-estilizada td.acciones {
-  inline-size: 5%;
 }
 
 .confirmation {

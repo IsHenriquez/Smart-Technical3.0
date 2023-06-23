@@ -121,3 +121,4 @@ v-table {
   /* Agrega otros estilos personalizados aquí */
 }
 </style>
+

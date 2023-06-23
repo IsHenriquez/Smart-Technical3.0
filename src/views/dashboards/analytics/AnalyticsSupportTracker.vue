@@ -1,7 +1,7 @@
 <template>
   <VCard>
     <VCardItem class="">
-      <VCardTitle class="text-h4 text-white mb-2">
+      <VCardTitle class="text-h4  mb-2">
         Último anuncio
         <VBtn icon class="size-xs " @click="mostrarModal = true">
           <VIcon>mdi-add</VIcon>
@@ -26,7 +26,7 @@
                       </VCol>
                       <!-- 👉 Form buttons -->
                       <VCol cols="12">
-                        <VBtn type="submit" class="me-3" @click="agregarUsuario">Submit</VBtn>
+                        <VBtn  class="me-3" @click="agregarUsuario">Submit</VBtn>
                         <VBtn variant="tonal" color="secondary" @click="mostrarModal = false">Cancel</VBtn>
                       </VCol>
                     </VRow>
@@ -42,7 +42,7 @@
       <br>
       <v-row>
         <v-col cols="6">
-          <VCardSubtitle class="text-h6 text-white">
+          <VCardSubtitle class="text-h6 ">
             Título: {{ ultimoItem.title }}
           </VCardSubtitle>
         </v-col>
@@ -54,7 +54,7 @@
       </v-row>
       <v-row>
         <v-col cols="6">
-          <VCardSubtitle class="text-h6 text-white">
+          <VCardSubtitle class="text-h6 ">
             Subido por: {{ userNames[ultimoItem.id_announcement_user] }}
           </VCardSubtitle>
         </v-col>
@@ -71,11 +71,13 @@
 <script>
 import axios from 'axios';
 import { ref, onMounted } from 'vue';
+const refVForm = ref()
 const mostrarModal = ref(false);
     const ultimoItem = ref({});
     const userNames = ref({});
-    const title = ref('');
-    const description = ref('');
+    var title = ref('');
+    var description = ref('');
+    var id_announcement_user = ref('');
     const userData = JSON.parse(localStorage.getItem('userData'))
 
 export default {
@@ -107,33 +109,30 @@ export default {
     }
 
     const agregarUsuario =  () => {
-      
+
         const timestampActual = new Date().getTime();
         const formData = new FormData()
+        var update_at
+      var created_at
         
           id_announcement_user = userData.id,
           title = title.value,
           description= description.value,
-          update_at= timestampActual,
-          created_at= timestampActual
+           update_at= timestampActual,
+           created_at= timestampActual
 
-          formData.append('id_announcement_user', 1)
-          formData.append('title', "sdds")
-          formData.append('description', "assa")
-          formData.append('created_at', 1687515562)
-          formData.append('update_at', 1687515562)
+          formData.append('id_announcement_user', id_announcement_user)
+          formData.append('title', title)
+          formData.append('description', description)
+          formData.append('created_at', update_at)
+          formData.append('update_at', update_at)
           
        
 
         // Realizar la solicitud POST a la API
-        /*axios.post('https://smarttechnicalcl.000webhostapp.com/api/announcement', formData).then(r => {
-        
-        // Reiniciar los campos del formulario
-        
-        
-
-        console.log()
-      console.log(response)
+        axios.post('https://smarttechnicalcl.000webhostapp.com/api/announcement', formData).then(r => {
+      
+          location.reload();
 
       }).catch (e => {
     //const { errors: formErrors } = e.response.data
@@ -141,7 +140,7 @@ export default {
 
     //errors.value = formErrors
     //console.error(e.response.data)
-  })*/
+  })
     };
     
 
@@ -153,6 +152,8 @@ export default {
         ultimoItem.value = array[array.length - 1];
 
         const userAnnouncement = ultimoItem.value.id_announcement_user;
+
+        
 
         const userName = await fetchUserName(userAnnouncement);
         userNames.value[userAnnouncement] = userName;

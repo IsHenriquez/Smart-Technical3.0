@@ -1,22 +1,26 @@
 <template>
   <div class="app">
-    <Mapa v-if=" usuarioSecr ||usuarioAdmin === true"/>
-    <VBtn v-if="usuarioTec === true" prepend-icon="tabler-plus" @click="mostrarModal = true">
-        Agregar Ubicación
-      </VBtn>
+    <addUbi/>
+    <Mapa class="bajarMapa"/>
+    
   </div>
 </template>
 
 <script>
 import Mapa from './Mapas.vue'
+import addUbi from './addUbi.vue'
 
 export default {
   name: 'App',
   components: {
+    addUbi,
     Mapa,
   },
 
   setup(){
+
+    const mostrarModal = ref(false)
+
     var usuarioSecr = false
     var usuarioTec = false
     var usuarioAdmin = false
@@ -39,7 +43,8 @@ export default {
     return{
       usuarioSecr,
       usuarioTec,
-      usuarioAdmin
+      usuarioAdmin,
+      mostrarModal,
     }
   }
 }
@@ -76,5 +81,9 @@ code {
 
 .app {
   text-align: center;
+}
+
+.bajarMapa{
+  padding-top: 50px;
 }
 </style>

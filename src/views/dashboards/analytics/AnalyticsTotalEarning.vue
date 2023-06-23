@@ -229,3 +229,4 @@ const totalEarnings = [
   --v-card-list-gap: 18px;
 }
 </style>
+

@@ -1,95 +1,88 @@
 <template>
-  <div >
-    <vRow >
-    <vBtn class="hola1">
-    <label class="col-span-2   font-medium">
-      Ingresar nueva dirección:
-      <input
-        
-        type="text"
-        @input="$emit('update:street', $event.target.value)"
-        :value="street"
-        ref="streetRef"
-        placeholder="Dirección"
-        
-      />
-    </label>
-  </vBtn>
-</vRow>
+  <div>
+    <input
+      ref="autocompleteInput"
+      type="text"
+      placeholder="Ingrese una ubicación"
+      @input="updateInput"
+      @focus="initializeAutocomplete"
+    />
+    <button @click="storeSelectedResult">Almacenar resultado seleccionado</button>
+    <button @click="sacarCoords">Guardar</button>
   </div>
 </template>
 
-
-
-
 <script>
-import {onMounted, onUnmounted, ref} from "vue";
+import axios from 'axios';
 
 export default {
-  props: {
-    
-    street: {
-      type: String,
-      default: '',
-    },
+  data() {
+    return {
+      userInput: '',
+      selectedPlace: null
+    };
   },
-  setup(props, context) {
-    const streetRef = ref();
-    let autocomplete;
-
+  mounted() {
+    this.initializeAutocomplete();
     
+  },
+  methods: {
+    initializeAutocomplete() {
+      const autocompleteInput = this.$refs.autocompleteInput;
+      const options = {
+        componentRestrictions: { country: 'cl' } // Restringe las sugerencias a Chile
+      };
+      const autocomplete = new google.maps.places.Autocomplete(autocompleteInput, options);
 
-    onMounted(() => {
-      autocomplete = new google.maps.places.Autocomplete(streetRef.value, {
-        types: ["address"],
-        componentRestrictions: { country: "CL" },
-        fields: ["address_components"]
+      autocomplete.addListener('place_changed', () => {
+        this.selectedPlace = autocomplete.getPlace();
       });
+    },
+    updateInput(event) {
+      this.userInput = event.target.value;
+    },
+    storeSelectedResult() {
+      if (this.selectedPlace) {
+        // Almacena el resultado seleccionado en una variable de tu elección
+        var storedResult = this.selectedPlace;
 
-      google.maps.event.addListener(autocomplete, "place_changed", () => {
-        const mapping = {
-          street_number: "update:streetNumber",
-          
-        }
-
-        for(const type in mapping) {
-          context.emit(mapping[type], "");
-        }
-
-        let place = {
-          address_components: [],
-          ...autocomplete.getPlace()
-        }
-
-        place.address_components.forEach((component) => {
-          component.types.forEach((type) => {
-              if(mapping.hasOwnProperty(type)){
-                context.emit(mapping[type], component.long_name);
-              }
-          });
-        });
-      });
-    });
-
-    onUnmounted(() => {
-      if(autocomplete) {
-        google.maps.event.clearInstanceListeners(autocomplete);
+        console.log('Resultado almacenado:', storedResult);
+        localStorage.setItem('place', JSON.stringify(storedResult));
+      } else {
+        console.log('Ningún resultado seleccionado');
       }
-    });
+    },
 
-    return {streetRef};
+    sacarCoords(){
+      
+      var Temp = JSON.parse(localStorage.getItem('place'))
+    var lat = Temp.geometry.location.lat
+    var lng = Temp.geometry.location.lng
+    var address = Temp.formatted_address
+    var userTemp = JSON.parse(localStorage.getItem('userData'))
+    var user_id = userTemp.id
+    const timestamp = new Date().getTime();
+    console.log(lat, lng)
+
+    const formData = new FormData()
+    formData.append('id_user', user_id)
+    formData.append('address', address)
+    formData.append('latitude', lat)
+    formData.append('longitude', lng)
+    formData.append('created_at', timestamp)
+    formData.append('updated_at', timestamp)
+
+    console.log("se va a subir:", formData)
+
+
+
+
+    axios.post('https://smarttechnicalcl.000webhostapp.com/api/position', formData).then(r => {
+      console.log("respuesta:", r.data)
+      location.reload();
+    })
+    
   }
-};
-</script>
-
-<style>
-
-
-
-.hola1{
- width: 1000px;
 }
-
-
-
-</style>
+}
+</script>

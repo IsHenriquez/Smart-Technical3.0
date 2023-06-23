@@ -1,6 +1,6 @@
 <template>
   <div class="app">
-    <addUbi/>
+    <addUbi />
     <Mapa class="bajarMapa"/>
     
   </div>
@@ -10,12 +10,14 @@
 import Mapa from './Mapas.vue'
 import addUbi from './addUbi.vue'
 
+
 export default {
   name: 'App',
   components: {
     addUbi,
     Mapa,
   },
+  
 
   setup(){
 
@@ -85,5 +87,6 @@ code {
 
 .bajarMapa{
   padding-top: 50px;
+
 }
 </style>

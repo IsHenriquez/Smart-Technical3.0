@@ -67,12 +67,13 @@
   <v-table>
     <thead>
       <tr>
-        <th class="columna-chica">ID</th>
+        <th class="columna">ID</th>
         <th class="columna">Nombre</th>
         <th class="columna">Apellido</th>
         <th class="columna">Email</th>
         <th class="columna">Phone</th>
-        <th class="columna-chica">Rol</th>
+        <th class="columna">Rol</th>
+        <th class="columna">Genero</th>
         <th class="columna-chica">Acciones</th>
       </tr>
     </thead>
@@ -373,12 +374,13 @@ export default {
 }
 
 .columna {
-  inline-size: 15%;
+  inline-size: 11%;
 }
 
 .columna-chica {
+  padding-block: -5%;
   padding-inline: -10px;
-  transform: translateX(100%);
+  transform: translateX(0%);
 }
 
 .columna-id {

@@ -90,10 +90,10 @@
         <tr v-for="ticket in geticket" :key="ticket.id">
           <td>{{ ticket.id }}</td>
           <td>{{ ticket.title }}</td>
-          <td>{{ ticket.id_status }}</td>
-          <td>{{ ticket.id_priority }}</td>
-          <td>{{ ticket.id_type }}</td>
-          <td>{{ ticket.id_category }}</td>
+          <td>{{ formatNumber(ticket.id_status, statusMap) }}</td>
+          <td>{{ formatNumber(ticket.id_priority, priorityMap) }}</td>
+          <td>{{ formatNumber(ticket.id_type, typeMap) }}</td>
+          <td>{{ formatNumber(ticket.id_category, categoryMap) }}</td>
           <td>{{ ticket.fecha_realizar_servicio }}</td>
           <td>
             <VBtn density="compact" icon="mdi-eye" @click="openModal2(ticket)" />
@@ -257,6 +257,8 @@ export default {
       isModalOpen3.value = false;
     };
 
+    
+
     //funcion get para listar los usuarios en la tabla
     onMounted(async () => {
       isLoading.value = true;
@@ -270,9 +272,13 @@ export default {
       isLoading.value = false;
     });
 
-    //funcion delete para eliminar usuario
+    //funcion delete para eliminar tickets
 
-    //funcion put para actualizar datos del usuario
+    //funcion put para actualizar datos del ticket
+
+
+    //funcion post para agregar ticker nuevo
+
 
     return {
       desplegable,
@@ -289,7 +295,37 @@ export default {
       openModal2,
       openModal3,
     };
+  
   },
+  data() {
+    return {
+      statusMap: {
+        1: 'Abierto',
+        2: 'Cerrado',
+      },
+      priorityMap: {
+        1: 'Urgente',
+        2: 'Media',
+        3: 'Baja'
+      },
+      typeMap: {
+        1: 'Tickets',
+        2: 'Citas',
+      },
+      categoryMap: {
+        1: 'Tickets',
+        2: 'Citas',
+      }
+    };
+  },
+  methods: {
+    formatNumber(value, numberMap) {
+      if (numberMap.hasOwnProperty(value)) {
+        return numberMap[value];
+      }
+      return value;
+    },
+  }
 }
 </script>
 

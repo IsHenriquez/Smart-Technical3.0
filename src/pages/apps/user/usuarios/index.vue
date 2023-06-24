@@ -14,7 +14,7 @@
             <VCardText>
               <!-- SECTION Form -->
               <VForm ref="refForm">
-                <VRow> 
+                <VRow>
                   <!-- 👉 Title -->
                   <VCol cols="12" md="12">
                     <AppTextField label="Nombre" v-model="name" />
@@ -84,7 +84,7 @@
           <td>{{ user.last_name }}</td>
           <td>{{ user.email }}</td>
           <td>{{ user.phone }}</td>
-          <td>{{ user.id_user_type }}</td>
+          <td>{{ formatNumber(user.id_user_type, rolMap) }}</td>
           <td>{{ user.gender }}</td>
           <td>
             <VBtn density="compact" icon="mdi-eye" @click="openModal2(user)" />
@@ -242,7 +242,7 @@ export default {
     const eliminarUsuario = async (userId) => {
       try {
         await axios.delete(`https://smarttechnicalcl.000webhostapp.com/api/user/${userId}`);
-        users.value = users.value.filter(user => user.id !== userId);
+        users.value = users.value.filter((user) => user.id !== userId);
       } catch (error) {
         console.error(error);
         // Maneja el error según tus necesidades
@@ -258,7 +258,7 @@ export default {
           email: email.value,
           id_user_type: rol.value,
           gender: gender.value,
-          password: password.value
+          password: password.value,
         });
 
         console.log('Usuario agregado:', response.data);
@@ -269,7 +269,6 @@ export default {
         console.error(error);
       }
     };
-
 
     //funcion put para actualizar datos del usuario
 
@@ -295,9 +294,26 @@ export default {
       openModal3,
     };
   },
-}
-</script>
 
+  data() {
+    return {
+      rolMap: {
+        1: 'Admin',
+        2: 'Secretario',
+        3: 'Tecnico',
+      }
+    };
+  },
+  methods: {
+    formatNumber(value, numberMap) {
+      if (numberMap.hasOwnProperty(value)) {
+        return numberMap[value];
+      }
+      return value;
+    },
+  }
+};
+</script>
 
 <style>
 .modal-overlay {

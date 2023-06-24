@@ -17,23 +17,17 @@
                 <VRow>
                   <!-- 👉 Title -->
                   <VCol cols="12" md="12">
-                    <AppTextField label="Nombre" v-model="name" />
-                  </VCol>
-                  <VCol cols=" 12" md="12">
-                    <AppTextField label="Apellido" v-model="last_name" />
+                    <AppTextField label="Nombre" id="nombre" />
                   </VCol>
                   <VCol cols="12" md="12">
-                    <AppTextField label="Email" v-model="email" />
+                    <AppTextField label="Apellido" id="apellido" />
                   </VCol>
                   <VCol cols="12" md="12">
-                    <AppTextField label="genero" v-model="gender" />
-                  </VCol>
-                  <VCol cols="12" md="12">
-                    <AppTextField label="Contraseña" v-model="password" />
+                    <AppTextField label="Email" id="email" />
                   </VCol>
                   <!-- 👉 Calendar -->
                   <VCol cols="12" md="12">
-                    <AppSelect label="Rol" :items="desplegableItems" :item-title="item => item.label" v-model="rol">
+                    <AppSelect label="Rol" :items="desplegableItems" :item-title="item => item.label" id="rol ">
                       <template #selection="{ item }">
                         <div class="align-center">
                           <VBadge :color="item.raw.color" inline dot class="pa-1 pb-2" />
@@ -67,8 +61,7 @@
         <th class="columna">Email</th>
         <th class="columna">Phone</th>
         <th class="columna-chica">Rol</th>
-        <th class="columna-chica">genero</th>
-        <th class="columna-id">Acciones</th>
+        <th class="columna-chica">Acciones</th>
       </tr>
     </thead>
     <tbody>
@@ -85,7 +78,6 @@
           <td>{{ user.email }}</td>
           <td>{{ user.phone }}</td>
           <td>{{ user.id_user_type }}</td>
-          <td>{{ user.gender }}</td>
           <td>
             <VBtn density="compact" icon="mdi-eye" @click="openModal2(user)" />
             <VBtn density="compact" icon="mdi-pencil" @click="openModal3" />
@@ -194,8 +186,6 @@ export default {
     const apellido = ref('');
     const email = ref('');
     const rol = ref('');
-    const gender = ref('');
-    const password = ref('');
 
     const desplegableItems = ref([
       { id: 1, label: 'Admin' },
@@ -250,25 +240,51 @@ export default {
     };
 
     //funcion post para agregar usuario
+
     const agregarUsuario = async () => {
       try {
-        const response = await axios.post('https://smarttechnicalcl.000webhostapp.com/api/user', {
+        const formData = {
+          active: 1,
+          id_user_type: 1,
+          id_vehicle: null,
           name: nombre.value,
           last_name: apellido.value,
+          mother_last_name: null,
+          identification_number: null,
+          gender: null,
+          birth_date: null,
+          phone: null,
           email: email.value,
-          id_user_type: rol.value,
-          gender: gender.value,
-          password: password.value
-        });
+          email_verified_at: null,
+          created_at: null,
+          updated_at: null
+        };
 
-        console.log('Usuario agregado:', response.data);
+        // Realizar la solicitud POST a la API
+        await axios.post('https://smarttechnicalcl.000webhostapp.com/api/user', formData);
 
-        // Cerrar el modal
-        mostrarModal.value = false;
+        if (response.status === 200) {
+          // Reiniciar los campos del formulario y actualizar la lista de usuarios
+          nombre.value = '';
+          apellido.value = '';
+          email.value = '';
+          rol.value = '';
+
+          const getUsersResponse = await axios.get('https://smarttechnicalcl.000webhostapp.com/api/user');
+          users.value = getUsersResponse.data.data;
+        } else {
+          console.error('Error al agregar el usuario');
+        }
+
+        // Actualizar la lista de usuarios
+        const response = await axios.get('https://smarttechnicalcl.000webhostapp.com/api/user');
+        users.value = response.data.data;
       } catch (error) {
         console.error(error);
+        // Manejar el error según tus necesidades
       }
     };
+
 
 
     //funcion put para actualizar datos del usuario
@@ -326,10 +342,6 @@ export default {
 
 .columna-chica {
   inline-size: 5%;
-}
-
-.columna-id {
-  inline-size: 9%;
 }
 
 .confirmation {

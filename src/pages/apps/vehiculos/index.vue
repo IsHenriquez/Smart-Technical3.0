@@ -1,7 +1,7 @@
 <template>
   <div>
     <div>
-      <VBtn v-if="usuarioAdmin === true" prepend-icon="tabler-plus" @click="mostrarModal = true">
+      <VBtn prepend-icon="tabler-plus" @click="mostrarModal = true">
         Agregar Vehiculo
       </VBtn>
     </div>
@@ -55,32 +55,23 @@
           </tr>
         </thead>
         <tbody>
-          <template v-if="isLoading">
-            <tr>
-              <td colspan="6">Cargando usuarios...</td>
-            </tr>
-          </template>
-          <template v-else>
-            <tr>
-              <td>Dato 0</td>
-              <td>Dato 1</td>
-              <td>Dato 2</td>
-              <td>Dato 3</td>
-              <td>Dato 4</td>
-              <td>
-                <VBtn density="compact" icon="mdi-eye" @click="openModal2" />
-                <VBtn v-if="usuarioSecr || usuarioAdmin === true" density="compact" icon="mdi-pencil"
-                  @click="openModal3" />
-                <VBtn v-if="usuarioAdmin === true" density="compact" icon="mdi-delete" @click="openModal" />
-              </td>
-            </tr>
-          </template>
-
-
-          <!-- Agrega más filas según sea necesario -->
+          <tr v-for="dato in datos" :key="dato.id">
+            <td>{{ dato.id }}</td>
+            <td>{{ dato.patente }}</td>
+            <td>{{ dato.marca }}</td>
+            <td>{{ dato.modelo }}</td>
+            <td>{{ dato.usuario }}</td>
+            <td>
+              <VBtn density="compact" icon="mdi-eye" @click="openModal2" />
+              <VBtn v-if="usuarioSecr || usuarioAdmin === true" density="compact" icon="mdi-pencil"
+                @click="openModal3" />
+              <VBtn v-if="usuarioAdmin === true" density="compact" icon="mdi-delete" @click="openModal" />
+            </td>
+          </tr>
         </tbody>
       </v-table>
     </div>
+
     <VDialog v-model="isModalOpen" @click:outside="closeModal">
       <VCard class="confirmation">
         <VCardTitle>Confirmación</VCardTitle>
@@ -96,12 +87,12 @@
       </VCard>
     </VDialog>
 
-    <!--Modal de boton ver usuario-->
+    <!-- Modal de botón ver usuario -->
     <VDialog v-model="isModalOpen2" @click:outside="closeModal">
       <VCard class="confirmation">
         <VCardTitle>Detalle Vehiculos</VCardTitle>
         <VCardText>
-          ver Vehiculos
+          Ver Vehiculos
           <!-- Contenido del modal -->
         </VCardText>
         <VCardActions>
@@ -111,7 +102,7 @@
       </VCard>
     </VDialog>
 
-    <!--Modal de boton editar usuario-->
+    <!-- Modal de botón editar usuario -->
     <VDialog v-model="isModalOpen3" @click:outside="closeModal">
       <VCard class="confirmation">
         <VCardTitle>Editar Vehiculos</VCardTitle>
@@ -134,6 +125,7 @@ import { ref } from 'vue'
 export default {
   setup() {
     const mostrarModal = ref(false)
+    const datos = ref([])
 
     const isModalOpen = ref(false)
     const isModalOpen2 = ref(false)
@@ -150,9 +142,9 @@ export default {
     }
 
     const closeModal = () => {
-      isModalOpen.value = false,
-        isModalOpen2.value = false,
-        isModalOpen3.value = false
+      isModalOpen.value = false
+      isModalOpen2.value = false
+      isModalOpen3.value = false
     }
 
     var usuarioSecr = false
@@ -164,20 +156,22 @@ export default {
 
     if (userType === 3) {
       usuarioSecr = true
-    }
-
-    else if (userType === 2) {
+    } else if (userType === 2) {
       usuarioTec = true
-    }
-
-    else if (userType === 1) {
+    } else if (userType === 1) {
       usuarioAdmin = true
     }
 
-
+    // Agregar datos estáticos al array `datos`
+    datos.value = [
+      { id: 1, patente: 'ABC123', marca: 'BMW', modelo: 'BMW XM 2023', usuario: 'Usuario 1' },
+      { id: 2, patente: 'DEF456', marca: 'Bentley', modelo: 'BENTAYGA', usuario: 'Usuario 2' },
+      { id: 3, patente: 'GHI789', marca: 'Chevrolet', modelo: 'Corvette', usuario: 'Usuario 3' }
+    ]
 
     return {
       mostrarModal,
+      datos,
       isModalOpen,
       isModalOpen2,
       isModalOpen3,

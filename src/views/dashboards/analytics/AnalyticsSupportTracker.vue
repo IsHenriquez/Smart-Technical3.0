@@ -125,7 +125,7 @@ export default {
           formData.append('title', title)
           formData.append('description', description)
           formData.append('created_at', update_at)
-          formData.append('update_at', update_at)
+          formData.append('update_at', created_at)
           
        
 

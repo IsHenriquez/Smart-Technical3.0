@@ -29,23 +29,17 @@
                 <VRow>
                   <!-- 👉 Title -->
                   <VCol cols="12" md="12">
-                    <AppTextField label="Nombre" v-model="name" />
-                  </VCol>
-                  <VCol cols=" 12" md="12">
-                    <AppTextField label="Apellido" v-model="last_name" />
+                    <AppTextField label="Nombre" id="nombre" />
                   </VCol>
                   <VCol cols="12" md="12">
-                    <AppTextField label="Email" v-model="email" />
+                    <AppTextField label="Apellido" id="apellido" />
                   </VCol>
                   <VCol cols="12" md="12">
-                    <AppTextField label="genero" v-model="gender" />
-                  </VCol>
-                  <VCol cols="12" md="12">
-                    <AppTextField label="Contraseña" v-model="password" />
+                    <AppTextField label="Email" id="email" />
                   </VCol>
                   <!-- 👉 Calendar -->
                   <VCol cols="12" md="12">
-                    <AppSelect label="Rol" :items="desplegableItems" :item-title="item => item.label" v-model="rol">
+                    <AppSelect label="Rol" :items="desplegableItems" :item-title="item => item.label" id="rol ">
                       <template #selection="{ item }">
                         <div class="align-center">
                           <VBadge :color="item.raw.color" inline dot class="pa-1 pb-2" />
@@ -79,8 +73,7 @@
         <th class="columna">Email</th>
         <th class="columna">Phone</th>
         <th class="columna-chica">Rol</th>
-        <th class="columna-chica">genero</th>
-        <th class="columna-id">Acciones</th>
+        <th class="columna-chica">Acciones</th>
       </tr>
     </thead>
     <tbody>
@@ -261,6 +254,7 @@ export default {
 
     //funcion post para agregar usuario
 
+
     const agregarUsuario = async () => {
       const formData = {
         name: nombre.value,
@@ -383,7 +377,8 @@ export default {
 }
 
 .columna-chica {
-  inline-size: 5%;
+  padding-inline: -10px;
+  transform: translateX(100%);
 }
 
 .columna-id {

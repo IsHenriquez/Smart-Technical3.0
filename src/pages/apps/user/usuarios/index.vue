@@ -259,7 +259,17 @@ export default {
           id_user_type: rol.value,
           gender: gender.value,
           password: password.value,
-        });
+        }
+
+        // Realizar la solicitud POST a la API
+        await axios.post('https://smarttechnicalcl.000webhostapp.com/api/user', formData);
+
+        if (response.status === 200) {
+          // Reiniciar los campos del formulario y actualizar la lista de usuarios
+          nombre.value = '';
+          apellido.value = '';
+          email.value = '';
+          rol.value = '';
 
           const getUsersResponse = await axios.get('https://smarttechnicalcl.000webhostapp.com/api/user');
           users.value = getUsersResponse.data.data;

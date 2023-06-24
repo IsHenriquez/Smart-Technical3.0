@@ -14,7 +14,7 @@
             <VCardText>
               <!-- SECTION Form -->
               <VForm ref="refForm">
-                <VRow>
+                <VRow> 
                   <!-- 👉 Title -->
                   <VCol cols="12" md="12">
                     <AppTextField label="Nombre" v-model="name" />

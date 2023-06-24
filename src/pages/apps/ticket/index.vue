@@ -17,10 +17,11 @@
                 <VRow>
                   <!-- 👉 Title -->
                   <VCol cols="12" md="12">
-                    <AppTextField label="Titulo" v-model="selectedTicket.title" />
+                    <AppTextField label="Titulo" v-model="selectedTicket.title" ref="titleField" />
                   </VCol>
                   <VCol cols="12" md="12">
-                    <AppSelect label="Prioridad" :items="desplegableItems" :item-title="item => item.label" v-model="selectedTicket.priorityticket" >
+                    <AppSelect label="Prioridad" :items="desplegableItems" :item-title="item => item.label"
+                      v-model="selectedTicket.priorityticket" ref="priorityField">
                       <template #selection="{ item }">
                         <div class="align-center">
                           <VBadge :color="item.raw.color" inline dot class="pa-1 pb-2" />
@@ -30,7 +31,8 @@
                     </AppSelect>
                   </VCol>
                   <VCol cols="12" md="12">
-                    <AppSelect label="Tipo Ticket" :items="desplegable" :item-title="item => item.label" v-model="selectedTicket.typeticket" >
+                    <AppSelect label="Tipo Ticket" :items="desplegable" :item-title="item => item.label"
+                      v-model="selectedTicket.typeticket" ref="typeField">
                       <template #selection="{ item }">
                         <div class="align-center">
                           <VBadge :color="item.raw.color" inline dot class="pa-1 pb-2" />
@@ -40,16 +42,16 @@
                     </AppSelect>
                   </VCol>
                   <VCol cols="12" md="12">
-                    <AppTextField label="Categoria" v-model="selectedTicket.categoryticket" />
+                    <AppTextField label="Categoria" v-model="selectedTicket.categoryticket" ref="categoryField" />
                   </VCol>
                   <VCol cols="12" md="12">
-                    <AppTextField label="Fecha Ticket" v-model="selectedTicket.fechaticket" />
+                    <AppTextField label="Fecha Ticket" v-model="selectedTicket.fechaticket" ref="dateField" />
                   </VCol>
 
 
                   <!-- 👉 Description -->
                   <VCol cols="12">
-                    <AppTextarea label="Descripción" v-model="selectedTicket.description" />
+                    <AppTextarea label="Descripción" v-model="selectedTicket.description" ref="descriptionField" />
                   </VCol>
 
                   <!-- 👉 Form buttons -->
@@ -136,19 +138,19 @@
             </tr>
             <tr>
               <th scope="row">Estado</th>
-              <td>{{ ": " + selectedTicket.statusticket }}</td>
+              <td>{{ ": " + formatNumber(selectedTicket.statusticket, statusMap) }}</td>
             </tr>
             <tr>
               <th scope="row">Prioridad</th>
-              <td>{{ ": " + selectedTicket.priorityticket }}</td>
+              <td>{{ ": " + formatNumber(selectedTicket.priorityticket, priorityMap) }}</td>
             </tr>
             <tr>
               <th scope="row">Tipo Ticket</th>
-              <td>{{ ": " + selectedTicket.typeticket }}</td>
+              <td>{{ ": " + formatNumber(selectedTicket.typeticket, typeMap) }}</td>
             </tr>
             <tr>
               <th scope="row">Categoria</th>
-              <td>{{ ": " + selectedTicket.categoryticket }}</td>
+              <td>{{ ": " + formatNumber(selectedTicket.categoryticket, categoryMap) }}</td>
             </tr>
             <tr>
               <th scope="row">Fecha Ticket</th>
@@ -235,16 +237,16 @@ export default {
     };
 
     const openModal2 = (ticket) => {
-  selectedTicket.value.id = ticket.id;
-  selectedTicket.value.title = ticket.title;
-  selectedTicket.value.statusticket = ticket.id_status;
-  selectedTicket.value.priorityticket = ticket.id_priority;
-  selectedTicket.value.typeticket = ticket.id_type;
-  selectedTicket.value.categoryticket = ticket.id_category;
-  selectedTicket.value.fechaticket = ticket.fecha_realizar_servicio;
-  selectedTicket.value.description = ticket.description;
-  isModalOpen2.value = true;
-};
+      selectedTicket.value.id = ticket.id;
+      selectedTicket.value.title = ticket.title;
+      selectedTicket.value.statusticket = ticket.id_status;
+      selectedTicket.value.priorityticket = ticket.id_priority;
+      selectedTicket.value.typeticket = ticket.id_type;
+      selectedTicket.value.categoryticket = ticket.id_category;
+      selectedTicket.value.fechaticket = ticket.fecha_realizar_servicio;
+      selectedTicket.value.description = ticket.description;
+      isModalOpen2.value = true;
+    };
 
 
     const openModal3 = () => {
@@ -257,7 +259,7 @@ export default {
       isModalOpen3.value = false;
     };
 
-    
+
 
     //funcion get para listar los usuarios en la tabla
     onMounted(async () => {
@@ -279,23 +281,58 @@ export default {
 
     //funcion post para agregar ticker nuevo
 
+    //funcion post para agregar ticker nuevo
+    function agregarUsuario() {
+  // Obtener una referencia al formulario utilizando la referencia "refForm"
+  const form = this.$refs.refForm;
+
+  // Verificar si el formulario es válido antes de enviar los datos
+  if (form && form.validate && form.validate()) {
+    // Obtener los valores de los campos del formulario dinámicamente
+    const formData = {};
+    for (const key in this.selectedTicket) {
+      if (this.selectedTicket.hasOwnProperty(key)) {
+        formData[key] = this.selectedTicket[key];
+      }
+    }
+
+    // Crear un objeto con los valores obtenidos
+    const data = {
+      "success": true,
+      "data": [formData]
+    };
+
+    // Enviar la solicitud POST con los datos del formulario
+    axios.post('https://smarttechnicalcl.000webhostapp.com/api/ticket', data)
+      .then(response => {
+        console.log(response);
+        // Manejar la respuesta de la solicitud POST
+      })
+      .catch(error => {
+        console.error(error);
+        // Manejar el error en caso de que ocurra
+      });
+  }
+}
+
 
     return {
-      desplegable,
-      geticket,
-      selectedTicket,
-      isLoading,
       mostrarModal,
+      geticket,
+      isLoading,
+      selectedTicket,
       desplegableItems,
+      desplegable,
       isModalOpen,
       isModalOpen2,
       isModalOpen3,
       openModal,
-      closeModal,
       openModal2,
       openModal3,
+      closeModal,
+      agregarUsuario,
     };
-  
+
   },
   data() {
     return {

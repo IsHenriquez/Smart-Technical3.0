@@ -45,8 +45,6 @@ import panel6 from "@/views/apps/grafana/panel6.vue"
       <columna />
     </VCol>
   </VRow>
-
-  <iframe src="  http://35.203.149.123:3000/login" frameborder="0" style="width: 600px; height: 600px;"></iframe>
 </template>
 
 

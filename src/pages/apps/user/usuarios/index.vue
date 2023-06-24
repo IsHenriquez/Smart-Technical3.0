@@ -4,6 +4,18 @@
       Agregar Usuario
     </VBtn>
   </div>
+  <v-expansion-panels>
+    <v-expansion-panel :expand="isPanelOpen" @click="togglePanel">
+      <template v-slot:header>
+        <div class="panel-header">Title</div>
+      </template>
+      <template v-slot:content>
+        <div class="panel-content">
+          <input type="text" placeholder="Campo 1" v-model="campo1" />
+        </div>
+      </template>
+    </v-expansion-panel>
+  </v-expansion-panels>
   <br>
   <Transition name="fade">
     <div v-if="mostrarModal" class="modal-overlay">
@@ -136,7 +148,7 @@
             </tr>
             <tr>
               <th scope="row">Rol</th>
-              <td>{{ ": " + selectedUser.id_user_type }}</td>
+              <td>{{ ": " + formatNumber(selectedUser.id_user_type, rolMap) }}</td>
             </tr>
             <!-- Agrega más filas según los campos de datos que desees mostrar -->
           </tbody>
@@ -190,12 +202,10 @@ export default {
     const isLoading = ref(false);
     const selectedUser = ref(null);
     const user = ref(null);
-    const nombre = ref('');
-    const apellido = ref('');
-    const email = ref('');
-    const rol = ref('');
-    const gender = ref('');
-    const password = ref('');
+    const nombre = ref("");
+    const apellido = ref("");
+    const email = ref("");
+    const rol = ref("");
 
     const desplegableItems = ref([
       { id: 1, label: 'Admin' },
@@ -250,25 +260,47 @@ export default {
     };
 
     //funcion post para agregar usuario
+
     const agregarUsuario = async () => {
-      try {
-        const response = await axios.post('https://smarttechnicalcl.000webhostapp.com/api/user', {
-          name: nombre.value,
-          last_name: apellido.value,
-          email: email.value,
-          id_user_type: rol.value,
-          gender: gender.value,
-          password: password.value,
-        });
-
-        console.log('Usuario agregado:', response.data);
-
-        // Cerrar el modal
-        mostrarModal.value = false;
-      } catch (error) {
-        console.error(error);
+      const formData = {
+        name: nombre.value,
+        last_name: apellido.value,
+        email: email.value,
+        id_user_type: rol.value,
+        active: true,
+        password: 'admin',
       }
-    };
+
+      try {
+        console.log('data post:', formData)
+
+        // Realizar la solicitud POST a la API
+        await axios.post('https://smarttechnicalcl.000webhostapp.com/api/user', formData)
+        console.log('flag 1')
+
+        if (response.status === 200) {
+          // Reiniciar los campos del formulario y actualizar la lista de usuarios
+          nombre.value = ''
+          apellido.value = ''
+          email.value = ''
+          rol.value = ''
+          console.log('flag 2 get tbl users')
+          const getUsersResponse = await axios.get('https://smarttechnicalcl.000webhostapp.com/api/user')
+
+          console.log('tbl user:', getUsersResponse)
+          console.log('data?', getUsersResponse.data.data)
+          users.value = getUsersResponse.data.data
+        } else {
+          console.error('Error al agregar el usuario')
+        }
+
+        // Actualizar la lista de usuarios
+
+      } catch (error) {
+        console.error(error)
+
+      }
+    }
 
     //funcion put para actualizar datos del usuario
 
@@ -294,7 +326,17 @@ export default {
       openModal3,
     };
   },
-
+  data() {
+    return {
+      isPanelOpen: false,
+      campo1: ''
+    };
+  },
+  methods: {
+    togglePanel() {
+      this.isPanelOpen = !this.isPanelOpen;
+    }
+  },
   data() {
     return {
       rolMap: {
@@ -345,7 +387,15 @@ export default {
 }
 
 .columna-id {
-  inline-size: 9%;
+  inline-size: 11%;
+}
+
+.panel-header {
+  cursor: pointer;
+}
+
+.panel-content {
+  padding: 10px;
 }
 
 .confirmation {

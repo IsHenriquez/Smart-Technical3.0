@@ -1,85 +1,63 @@
 <template>
-  <div class="table-container">
-    <v-table>
-      <thead>
-        <tr>
-          <th class="columna">ID</th>
-          <th class="columna-seccion">Nombre Usuario</th>
-          <th class="columna-seccion">Email</th>
-          <th class="columna-seccion">Puntaje NPS</th>
-        </tr>
-      </thead>
-      <tbody>
-        <template v-if="loading">
-          <tr>
-            <td colspan="4">Cargando usuarios...</td>
-          </tr>
-        </template>
-        <template v-else>
-          <tr v-for="user in users" :key="user.id">
-            <td>{{ user.id }}</td>
-            <td>{{ user.name }}</td>
-            <td>{{ user.email }}</td>
-            <td>{{ user.npsScore }}</td>
-          </tr>
-        </template>
-      </tbody>
-    </v-table>
+  <div>
+    <VCard class="card">
+      <h2 class="centertext">Net Promoter Score</h2>
+      <p class="centertext">En una escala del 0 al 10?</p>
+      <div class="rating">
+        <VBtn v-for="score in 10" :key="score" :class="{ 'active': selectedScore === score }" @click="selectScore(score)">
+          {{ score === 10 ? '10' : score }} {{ getFace(score) }}
+        </VBtn>
+      </div>
+      <div v-if="selectedScore !== null && !submitted">
+        <VBtn @click="confirmScore" class="buttonps">Confirmar</VBtn>
+      </div>
+    </VCard>
+    <br><br>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
-import { onMounted, ref } from 'vue';
-
 export default {
-  setup() {
-    const users = ref([]);
-    const isLoading = ref(false);
-    const user = ref(null);
-    const nombre = ref('');
-    const apellido = ref('');
-    const email = ref('');
-    const rol = ref('');
-
-    //funcion get para listar los usuarios en la tabla
-    onMounted(async () => {
-      isLoading.value = true;
-      try {
-        const response = await axios.get('https://smarttechnicalcl.000webhostapp.com/api/user');
-        users.value = response.data.data;
-      } catch (error) {
-        console.error(error);
-      }
-      isLoading.value = false;
-    });
+  data() {
     return {
-      nombre,
-      apellido,
-      email,
-      rol,
-      user,
-      users,
-      isLoading,
+      selectedScore: null,
+      submitted: false
     };
   },
-}
+  methods: {
+    selectScore(score) {
+      this.selectedScore = score;
+    },
+    confirmScore() {
+      this.submitted = true;
+      const scores = JSON.parse(localStorage.getItem('scores')) || [];
+      scores.push(this.selectedScore);
+      localStorage.setItem('scores', JSON.stringify(scores));
+      this.$emit('score-submitted', this.selectedScore);
+    },
+    getFace(score) {
+      if (score >= 8) {
+        return '😃';
+      } else if (score >= 0 && score <= 3) {
+        return '🙁';
+      } else {
+        return '😐';
+      }
+    }
+  }
+};
 </script>
 
 <style scoped>
 .rating {
   display: flex;
   justify-content: center;
-  margin-block-start: 20px;
+  margin-block-start: 18px;
 }
 
 .buttonps {
+  margin-block-start: 25px;
   transform: translateX(890%);
-}
-
-.buttonps:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
 }
 
 button {
@@ -95,30 +73,17 @@ button {
   transition: background-color 0.3s ease;
 }
 
+.centertext {
+  text-align: center;
+  transform: translateX(2%);
+}
+
+.card {
+  block-size: 200px;
+}
+
 button.active {
   background-color: #007bff;
   color: #fff;
 }
-
-.table-container {
-  display: flex;
-  justify-content: center;
-  inline-size: 100%;
-}
-
-.columna {
-  inline-size: 40%;
-}
-
-.columna-seccion {
-  inline-size: 700px;
-}
-
-/* Ajusta los estilos de la tabla según sea necesario */
-v-table {
-  inline-size: 100%;
-
-  /* Agrega otros estilos personalizados aquí */
-}
 </style>
-

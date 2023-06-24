@@ -51,4 +51,11 @@ export default [
     action: 'manage',
       subject: 'all',
   },
+  {
+    title: 'Resultados NPS',
+    icon: { icon: 'tabler-star'},
+    to: 'pages-nps-npsClient',
+    action: 'manage',
+      subject: 'all',
+  },
 ]

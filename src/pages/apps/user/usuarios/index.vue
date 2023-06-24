@@ -77,7 +77,8 @@
           <td>{{ user.last_name }}</td>
           <td>{{ user.email }}</td>
           <td>{{ user.phone }}</td>
-          <td>{{ user.id_user_type }}</td>
+          <td>{{ formatNumber(user.id_user_type, rolMap) }}</td>
+          <td>{{ user.gender }}</td>
           <td>
             <VBtn density="compact" icon="mdi-eye" @click="openModal2(user)" />
             <VBtn density="compact" icon="mdi-pencil" @click="openModal3" />
@@ -232,7 +233,7 @@ export default {
     const eliminarUsuario = async (userId) => {
       try {
         await axios.delete(`https://smarttechnicalcl.000webhostapp.com/api/user/${userId}`);
-        users.value = users.value.filter(user => user.id !== userId);
+        users.value = users.value.filter((user) => user.id !== userId);
       } catch (error) {
         console.error(error);
         // Maneja el error según tus necesidades
@@ -255,20 +256,10 @@ export default {
           birth_date: null,
           phone: null,
           email: email.value,
-          email_verified_at: null,
-          created_at: null,
-          updated_at: null
-        };
-
-        // Realizar la solicitud POST a la API
-        await axios.post('https://smarttechnicalcl.000webhostapp.com/api/user', formData);
-
-        if (response.status === 200) {
-          // Reiniciar los campos del formulario y actualizar la lista de usuarios
-          nombre.value = '';
-          apellido.value = '';
-          email.value = '';
-          rol.value = '';
+          id_user_type: rol.value,
+          gender: gender.value,
+          password: password.value,
+        });
 
           const getUsersResponse = await axios.get('https://smarttechnicalcl.000webhostapp.com/api/user');
           users.value = getUsersResponse.data.data;
@@ -284,8 +275,6 @@ export default {
         // Manejar el error según tus necesidades
       }
     };
-
-
 
     //funcion put para actualizar datos del usuario
 
@@ -311,9 +300,26 @@ export default {
       openModal3,
     };
   },
-}
-</script>
 
+  data() {
+    return {
+      rolMap: {
+        1: 'Admin',
+        2: 'Secretario',
+        3: 'Tecnico',
+      }
+    };
+  },
+  methods: {
+    formatNumber(value, numberMap) {
+      if (numberMap.hasOwnProperty(value)) {
+        return numberMap[value];
+      }
+      return value;
+    },
+  }
+};
+</script>
 
 <style>
 .modal-overlay {

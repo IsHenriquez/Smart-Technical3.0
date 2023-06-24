@@ -1,189 +1,208 @@
 <template>
   <div>
-    <div>
-      <VBtn v-if="usuarioSecr || usuarioAdmin === true" prepend-icon="tabler-plus" @click="mostrarModal = true">
-        Agregar Ticket
-      </VBtn>
-    </div>
-    <Transition name="fade">
-
-      <div v-if="mostrarModal" class="modal-overlay">
-        <div class="modal modal-right">
-          <!-- Contenido del formulario aquí -->
-          <PerfectScrollbar :options="{ wheelPropagation: false }">
-            <VCard flat>
-              <VCardText>
-                <!-- SECTION Form -->
-                <VForm ref="refForm">
-                  <VRow>
-                    <!-- 👉 Title -->
-                    <VCol cols="12">
-                      <AppTextField label="Título" />
-                    </VCol>
-
-                    <!-- 👉 Calendar -->
-                    <VCol cols="12">
-                      <AppSelect label="Prioridad" :items="desplegableItems" :item-title="item => item.label">
-                        <template #selection="{ item }">
-                          <div class="align-center">
-                            <VBadge :color="item.raw.color" inline dot class="pa-1 pb-2" />
-                            <span>{{ item.raw.label }}</span>
-                          </div>
-                        </template>
-                      </AppSelect>
-                    </VCol>
-
-                    <VCol cols="12">
-                      <AppSelect label="Tipo Ticket" :items="desplegable" :item-title="item => item.label">
-                        <template #selection="{ item }">
-                          <div class="align-center">
-                            <VBadge :color="item.raw.color" inline dot class="pa-1 pb-2" />
-                            <span>{{ item.raw.label }}</span>
-                          </div>
-                        </template>
-                      </AppSelect>
-                    </VCol>
-
-                    <VCol cols="12">
-                      <AppTextField label="Fecha Ticket" />
-                    </VCol>
-
-                    <!-- 👉 Description -->
-                    <VCol cols="12">
-                      <AppTextarea label="Descripción" />
-                    </VCol>
-
-                    <!-- 👉 Form buttons -->
-                    <VCol cols="12">
-                      <VBtn type="submit" class="me-3">Submit</VBtn>
-                      <VBtn variant="tonal" color="secondary" @click="mostrarModal = false">Cancel</VBtn>
-                    </VCol>
-                  </VRow>
-                </VForm>
-                <!-- !SECTION -->
-              </VCardText>
-            </VCard>
-          </PerfectScrollbar>
-        </div>
-      </div>
-    </Transition>
-
-    <div>
-      <br>
-      <v-table>
-        <thead>
-          <tr>
-            <th class="columna-id">ID</th>
-            <th class="columna">Titulo</th>
-            <th class="columna">Estado</th>
-            <th class="columna">Prioridad</th>
-            <th class="columna">TIPO TICKET</th>
-            <th class="columna">Fecha</th>
-            <th class="columna acciones">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <template v-if="isLoading">
-            <tr>
-              <td colspan="6">Cargando Tickets...</td>
-            </tr>
-          </template>
-          <template v-else>
-            <tr v-for="ticket in tickets" :key="ticket.id">
-              <td>{{ ticket.id }}</td>
-              <td>{{ ticket.title }}</td>
-              <td>{{ ticket.id_status }}</td>
-              <td>{{ ticket.id_priority }}</td>
-              <td>{{ ticket.id_type }}</td>
-              <td>{{ ticket.fecha_realizar_servicio }}</td>
-              <td>
-                <VBtn density="compact" icon="mdi-eye" @click="openModal2(ticket)" />
-                <VBtn density="compact" icon="mdi-pencil" @click="openModal3" />
-                <VBtn v-if="usuarioSecr || usuarioAdmin === true" density="compact" icon="mdi-delete"
-                  @click="openModal(ticket.id)" />
-              </td>
-            </tr>
-          </template>
-        </tbody>
-      </v-table>
-    </div>
-
-    <VDialog v-model="isModalOpen" @click:outside="closeModal">
-      <VCard class="confirmation">
-        <VCardTitle>Confirmación</VCardTitle>
-        <VCardText>
-          ¿Seguro que desea eliminar este ticket?
-          <!-- Contenido del modal -->
-        </VCardText>
-
-        <VCardActions>
-          <VBtn @click="closeModal">Confirmar</VBtn>
-          <VBtn @click="closeModal">Cerrar</VBtn>
-        </VCardActions>
-      </VCard>
-    </VDialog>
-
-    <!--Modal de boton ver ticket-->
-    <VDialog v-model="isModalOpen2" @click:outside="closeModal">
-      <VCard class="confirmation3">
-        <VCardTitle style="text-align: center;">Detalle del Ticket</VCardTitle>
-        <VCardText>
-          <v-table>
-            <tbody>
-              <tr class="tableUser">
-                <th scope="row">ID</th>
-                <td>{{ ": " + selectedTicket.id }}</td>
-              </tr>
-              <tr>
-                <th scope="row">Titulo</th>
-                <td>{{ ": " + selectedTicket.title }}</td>
-              </tr>
-
-              <tr>
-                <th scope="row">Estado</th>
-                <td>{{ ": " + selectedTicket.id_status }}</td>
-              </tr>
-              <tr>
-                <th scope="row">Prioridad</th>
-                <td>{{ ": " + selectedTicket.id_priority }}</td>
-              </tr>
-              <tr>
-                <th scope="row">Tipo Ticket</th>
-                <td>{{ ": " + selectedTicket.id_type }}</td>
-              </tr>
-              <tr>
-                <th scope="row">Fecha de ticket</th>
-                <td>{{ ": " + selectedTicket.fecha_realizar_servicio }}</td>
-              </tr>
-              <tr>
-                <th scope="row">Descripcion</th>
-                <td>{{ ": " + selectedTicket.description }}</td>
-              </tr>
-              <!-- Agrega más filas según los campos de datos que desees mostrar -->
-            </tbody>
-          </v-table>
-        </VCardText>
-        <VCardActions>
-          <VBtn @click="closeModal" style="transform: translateX(590%);">Cerrar</VBtn>
-        </VCardActions>
-      </VCard>
-    </VDialog>
-
-    <!--Modal de boton editar usuario-->
-    <VDialog v-model="isModalOpen3" @click:outside="closeModal">
-      <VCard class="confirmation">
-        <VCardTitle>Editar Ticket</VCardTitle>
-        <VCardText>
-          Ticket...
-          <!-- Contenido del modal -->
-        </VCardText>
-        <VCardActions>
-          <VBtn @click="closeModal">Confirmar</VBtn>
-          <VBtn @click="closeModal">Cerrar</VBtn>
-        </VCardActions>
-      </VCard>
-    </VDialog>
+    <VBtn prepend-icon="tabler-plus" @click="mostrarModal = true">
+      Agregar Ticket
+    </VBtn>
   </div>
+  <br>
+  <Transition name="fade">
+    <div v-if="mostrarModal" class="modal-overlay">
+      <div class="modal modal-right">
+        <!-- Contenido del formulario aquí -->
+        <PerfectScrollbar :options="{ wheelPropagation: false }">
+          <VCard flat>
+            <VCardText>
+              <!-- SECTION Form -->
+              <VForm ref="refForm">
+                <VRow>
+                  <!-- 👉 Title -->
+                  <VCol cols="12" md="12">
+                    <AppTextField label="Titulo" v-model="selectedTicket.title" />
+                  </VCol>
+                  <VCol cols="12" md="12">
+                    <AppSelect label="Prioridad" :items="desplegableItems" :item-title="item => item.label" v-model="selectedTicket.priorityticket" >
+                      <template #selection="{ item }">
+                        <div class="align-center">
+                          <VBadge :color="item.raw.color" inline dot class="pa-1 pb-2" />
+                          <span>{{ item.raw.label }}</span>
+                        </div>
+                      </template>
+                    </AppSelect>
+                  </VCol>
+                  <VCol cols="12" md="12">
+                    <AppSelect label="Tipo Ticket" :items="desplegable" :item-title="item => item.label" v-model="selectedTicket.typeticket" >
+                      <template #selection="{ item }">
+                        <div class="align-center">
+                          <VBadge :color="item.raw.color" inline dot class="pa-1 pb-2" />
+                          <span>{{ item.raw.label }}</span>
+                        </div>
+                      </template>
+                    </AppSelect>
+                  </VCol>
+                  <VCol cols="12" md="12">
+                    <AppTextField label="Categoria" v-model="selectedTicket.categoryticket" />
+                  </VCol>
+                  <VCol cols="12" md="12">
+                    <AppTextField label="Fecha Ticket" v-model="selectedTicket.fechaticket" />
+                  </VCol>
+
+
+                  <!-- 👉 Description -->
+                  <VCol cols="12">
+                    <AppTextarea label="Descripción" v-model="selectedTicket.description" />
+                  </VCol>
+
+                  <!-- 👉 Form buttons -->
+                  <VCol cols="12">
+                    <VBtn type="submit" class="me-3" @click="agregarUsuario">Submit</VBtn>
+                    <VBtn variant="tonal" color="secondary" @click="mostrarModal = false">Cancel</VBtn>
+                  </VCol>
+                </VRow>
+              </VForm>
+              <!-- !SECTION -->
+            </VCardText>
+          </VCard>
+        </PerfectScrollbar>
+      </div>
+    </div>
+  </Transition>
+
+  <v-table class="table">
+    <thead>
+      <tr>
+        <th class="columna-chica">ID</th>
+        <th class="columna">Titulo</th>
+        <th class="columna">Estado</th>
+        <th class="columna">Prioridad</th>
+        <th class="columna">Tipo Ticket</th>
+        <th class="columna">Categoria</th>
+        <th class="columna">Fecha Ticket</th>
+        <th class="columna-id">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <template v-if="isLoading">
+        <tr>
+          <td colspan="6">Cargando Tickets...</td>
+        </tr>
+      </template>
+      <template v-else>
+        <tr v-for="ticket in geticket" :key="ticket.id">
+          <td>{{ ticket.id }}</td>
+          <td>{{ ticket.title }}</td>
+          <td>{{ formatNumber(ticket.id_status, statusMap) }}</td>
+          <td>{{ formatNumber(ticket.id_priority, priorityMap) }}</td>
+          <td>{{ formatNumber(ticket.id_type, typeMap) }}</td>
+          <td>{{ formatNumber(ticket.id_category, categoryMap) }}</td>
+          <td>{{ ticket.fecha_realizar_servicio }}</td>
+          <td>
+            <VBtn density="compact" icon="mdi-eye" @click="openModal2(ticket)" />
+            <VBtn density="compact" icon="mdi-pencil" @click="openModal3" />
+            <VBtn density="compact" icon="mdi-delete" @click="openModal" />
+          </td>
+        </tr>
+      </template>
+    </tbody>
+  </v-table>
+
+  <VDialog v-model="isModalOpen" @click:outside="closeModal">
+    <VCard class="confirmation2">
+      <VCardTitle>Confirmación</VCardTitle>
+      <VCardText>
+        ¿Seguro que desea eliminar este Ticket?
+      </VCardText>
+
+      <VCardActions>
+        <VBtn @click="">Confirmar</VBtn>
+        <VBtn @click="closeModal">Cerrar</VBtn>
+      </VCardActions>
+    </VCard>
+  </VDialog>
+
+  <!--Modal de boton ver usuario-->
+  <VDialog v-model="isModalOpen2" @click:outside="closeModal">
+    <VCard class="confirmation3">
+      <VCardTitle style="text-align: center;">Detalle del Usuario</VCardTitle>
+      <VCardText>
+        <v-table>
+          <tbody>
+            <tr class="tableUser">
+              <th scope="row">ID</th>
+              <td>{{ ": " + selectedTicket.id }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Titulo</th>
+              <td>{{ ": " + selectedTicket.title }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Estado</th>
+              <td>{{ ": " + selectedTicket.statusticket }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Prioridad</th>
+              <td>{{ ": " + selectedTicket.priorityticket }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Tipo Ticket</th>
+              <td>{{ ": " + selectedTicket.typeticket }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Categoria</th>
+              <td>{{ ": " + selectedTicket.categoryticket }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Fecha Ticket</th>
+              <td>{{ ": " + selectedTicket.fechaticket }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Descripcion</th>
+              <td>{{ ": " + selectedTicket.description }}</td>
+            </tr>
+            <!-- Agrega más filas según los campos de datos que desees mostrar -->
+          </tbody>
+        </v-table>
+      </VCardText>
+      <VCardActions>
+        <VBtn @click="closeModal" style="transform: translateX(590%);">Cerrar</VBtn>
+      </VCardActions>
+    </VCard>
+  </VDialog>
+
+  <!--Modal de boton editar usuario-->
+  <VDialog v-model="isModalOpen3" @click:outside="closeModal">
+    <VCard class="confirmation">
+      <VCardTitle>Editar Ticket</VCardTitle>
+      <VCardText>
+        <VForm ref="refForm">
+          <VRow>
+            <!-- 👉 Title -->
+            <VCol cols="12" md="12" class="editform">
+              <AppTextField label="Title" />
+            </VCol>
+            <VCol cols="12" md="12" class="editform">
+              <AppTextField label="Estado" />
+            </VCol>
+            <VCol cols="12" md="12" class="editform">
+              <AppTextField label="Prioridad" />
+            </VCol>
+            <VCol cols="12" md="12" class="editform">
+              <AppTextField label="Tipo Ticket" />
+            </VCol>
+            <VCol cols="12" md="12" class="editform">
+              <AppTextField label="Fecha Inicio" />
+            </VCol>
+            <VCol cols="12">
+              <AppTextarea label="Descripción" />
+            </VCol>
+          </VRow>
+        </VForm>
+      </VCardText>
+      <VCardActions>
+        <VBtn @click="closeModal">Confirmar</VBtn>
+        <VBtn @click="closeModal">Cerrar</VBtn>
+      </VCardActions>
+    </VCard>
+  </VDialog>
 </template>
 
 <script>
@@ -191,84 +210,81 @@ import axios from 'axios';
 import { onMounted, ref } from 'vue';
 
 export default {
-
   setup() {
-    const ticket = ref([]);
-    const mostrarModal = ref(false)
-    const data1 = ref([]);
-    const data2 = ref([]);
-    const data3 = ref([]);
+    const mostrarModal = ref(false);
+    const geticket = ref([]);
     const isLoading = ref(false);
-    const tickets = ref([]);
-    const selectedTicket = ref(null);
+    const selectedTicket = ref({});
 
     const desplegableItems = ref([
-      { id: 1, label: 'Baja' },
+      { id: 1, label: 'Alta' },
       { id: 2, label: 'Media' },
-      { id: 3, label: 'Alta' },
-    ])
+      { id: 3, label: 'Baja' },
+    ]);
     const desplegable = ref([
-      { id: 1, label: 'Ticket' },
-      { id: 2, label: 'Cita' },
-    ])
+      { id: 1, label: 'Cita' },
+      { id: 2, label: 'Tickets' },
+    ]);
 
-    const isModalOpen = ref(false)
-    const isModalOpen2 = ref(false)
-    const isModalOpen3 = ref(false)
+    const isModalOpen = ref(false);
+    const isModalOpen2 = ref(false);
+    const isModalOpen3 = ref(false);
 
     const openModal = () => {
-      isModalOpen.value = true
-    }
-    const openModal2 = () => {
-      isModalOpen2.value = true
-    }
+      isModalOpen.value = true;
+    };
+
+    const openModal2 = (ticket) => {
+  selectedTicket.value.id = ticket.id;
+  selectedTicket.value.title = ticket.title;
+  selectedTicket.value.statusticket = ticket.id_status;
+  selectedTicket.value.priorityticket = ticket.id_priority;
+  selectedTicket.value.typeticket = ticket.id_type;
+  selectedTicket.value.categoryticket = ticket.id_category;
+  selectedTicket.value.fechaticket = ticket.fecha_realizar_servicio;
+  selectedTicket.value.description = ticket.description;
+  isModalOpen2.value = true;
+};
+
+
     const openModal3 = () => {
-      isModalOpen3.value = true
-    }
+      isModalOpen3.value = true;
+    };
 
     const closeModal = () => {
-      isModalOpen.value = false,
-        isModalOpen2.value = false,
-        isModalOpen3.value = false
-    }
+      isModalOpen.value = false;
+      isModalOpen2.value = false;
+      isModalOpen3.value = false;
+    };
 
-    var usuarioSecr = false
-    var usuarioTec = false
-    var usuarioAdmin = false
+    
 
-    const userData = JSON.parse(localStorage.getItem('userData') || '{}')
-    const userType = (userData && userData.id_user_type) ? userData.id_user_type : null
-
-    if (userType === 3) {
-      usuarioSecr = true
-    }
-
-    else if (userType === 2) {
-      usuarioTec = true
-    }
-
-    else if (userType === 1) {
-      usuarioAdmin = true
-    }
-
-
+    //funcion get para listar los usuarios en la tabla
     onMounted(async () => {
       isLoading.value = true;
       try {
         const response = await axios.get('https://smarttechnicalcl.000webhostapp.com/api/ticket');
-        tickets.value = response.data.data;
+        geticket.value = response.data.data;
+        console.log(response.data);
       } catch (error) {
         console.error(error);
       }
       isLoading.value = false;
     });
 
+    //funcion delete para eliminar tickets
+
+    //funcion put para actualizar datos del ticket
+
+
+    //funcion post para agregar ticker nuevo
+
 
     return {
-      selectedTicket,
       desplegable,
-      ticket,
-      tickets,
+      geticket,
+      selectedTicket,
+      isLoading,
       mostrarModal,
       desplegableItems,
       isModalOpen,
@@ -278,17 +294,41 @@ export default {
       closeModal,
       openModal2,
       openModal3,
-      usuarioSecr,
-      usuarioTec,
-      usuarioAdmin,
-      data1,
-      data2,
-      data3,
-      isLoading,
-    }
+    };
+  
   },
+  data() {
+    return {
+      statusMap: {
+        1: 'Abierto',
+        2: 'Cerrado',
+      },
+      priorityMap: {
+        1: 'Urgente',
+        2: 'Media',
+        3: 'Baja'
+      },
+      typeMap: {
+        1: 'Tickets',
+        2: 'Citas',
+      },
+      categoryMap: {
+        1: 'Tickets',
+        2: 'Citas',
+      }
+    };
+  },
+  methods: {
+    formatNumber(value, numberMap) {
+      if (numberMap.hasOwnProperty(value)) {
+        return numberMap[value];
+      }
+      return value;
+    },
+  }
 }
 </script>
+
 
 <style>
 .modal-overlay {
@@ -302,7 +342,7 @@ export default {
 }
 
 .modal {
-  padding: 30px;
+  padding: 20px;
   inline-size: 450px;
   transform: translateX(-37%);
 }
@@ -311,24 +351,31 @@ export default {
   margin-inline-start: 20%;
 }
 
-.columna-id {
-  inline-size: 3%;
+.columna {
+  inline-size: 14%;
 }
 
-.columna {
-  inline-size: 5%;
+.columna-id {
+  font-size: 10px;
+  padding-block: -5%;
+  padding-inline: -10px;
+  transform: translateX(-4%);
+}
+
+.v-btn--dense {
+  font-size: 12px;
+  padding-block: 1px;
+  padding-inline: 8px;
 }
 
 .confirmation {
-  display: flex;
   align-items: center;
-  justify-content: center;
+  block-size: 470px;
+  inline-size: 350px;
   inset-block-start: 50%;
-  margin-block: 0;
   margin-inline: auto;
-  max-inline-size: 700px;
   transform: translateY(-29%);
-  transform: translateX(23%);
+  transform: translateX(2%);
 }
 
 .confirmation3 {

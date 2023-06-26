@@ -29,35 +29,26 @@
                 <VRow>
                   <!-- 👉 Title -->
                   <VCol cols="12" md="12">
-                    <AppTextField label="Nombre" id="nombre" v-model="nombreModal"/>
+                    <AppTextField label="Nombre" id="nombre" v-model="nombreModal" />
                   </VCol>
                   <VCol cols="12" md="12">
-                    <AppTextField label="Apellido" id="apellido"  v-model="apellidoModal"/>
+                    <AppTextField label="Apellido" id="apellido" v-model="apellidoModal" />
                   </VCol>
                   <VCol cols="12" md="12">
-                    <AppTextField label="Teléfono (incluir código de país)" id="phone"  v-model="phoneModal" @keydown="handleKeydown" :error-messages="phoneError"
-                        @blur="handleInput"/>
+                    <AppTextField label="Teléfono (incluir código de país)" id="phone" v-model="phoneModal"
+                      @keydown="handleKeydown" :error-messages="phoneError" @blur="handleInput" />
                   </VCol>
                   <VCol cols="12" md="12">
-                    <AppTextField
-                        label="RUT"
-                        id="rut"
-                        v-model="rut"
-                        :error-messages="rutError"
-                        @blur="validarRut"
-                      />
+                    <AppTextField label="RUT" id="rut" v-model="rut" :error-messages="rutError" @blur="validarRut" />
                   </VCol>
                   <VCol cols="12" md="12">
-                    <AppTextField
-                        label="Correo Electrónico"
-                        v-model="email"
-                        :error-messages="emailError"
-                        @blur="validateEmail"
-                      />
+                    <AppTextField label="Correo Electrónico" v-model="email" :error-messages="emailError"
+                      @blur="validateEmail" />
                   </VCol>
                   <!-- 👉 Calendar -->
                   <VCol cols="12" md="12">
-                    <AppSelect label="Rol" :items="desplegableItems" :item-title="item => item.label" id="rol" v-model="opcionRolSeleccionada">
+                    <AppSelect label="Rol" :items="desplegableItems" :item-title="item => item.label" id="rol"
+                      v-model="opcionRolSeleccionada">
                       <template #selection="{ item }">
                         <div class="align-center">
                           <VBadge :color="item.raw.color" inline dot class="pa-1 pb-2" />
@@ -81,7 +72,6 @@
       </div>
     </div>
   </Transition>
-
 </template>
 
 <script>
@@ -141,7 +131,7 @@ export default {
     return {
       isPanelOpen: false,
       campo1: '',
-    
+
       nombreModal: '',
       apellidoModal: '',
       email: '',
@@ -158,8 +148,12 @@ export default {
     },
 
     handleKeydown(event) {
-      // Verifica si el evento de teclado corresponde a un dígito numérico
-      if (/[A-Za-z+]/.test(event.key)) {
+      // Verifica si la tecla presionada es un dígito numérico
+      if (
+        /[A-Za-z+]/.test(event.key) &&
+        event.key !== "Backspace" &&
+        !/^Arrow/.test(event.key)
+      ) {
         event.preventDefault();
       }
     },
@@ -211,7 +205,7 @@ export default {
     },
     handleInput() {
       const maxLength = 11; // Longitud máxima permitida
-      
+
       if (this.phoneModal.length > maxLength) {
         this.phoneError = 'El largo del número no corresponde'; // Recorta el valor a la longitud máxima
       } else if (this.phoneModal.length < maxLength) {

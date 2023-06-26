@@ -124,7 +124,7 @@
   <!--Modal de boton ver usuario-->
   <VDialog v-model="isModalOpen2" @click:outside="closeModal">
     <VCard class="confirmation3">
-      <VCardTitle style="text-align: center;">Detalle del Usuario</VCardTitle>
+      <VCardTitle style="text-align: center;">Detalle del Ticket</VCardTitle>
       <VCardText>
         <v-table>
           <tbody>
@@ -154,7 +154,7 @@
             </tr>
             <tr>
               <th scope="row">Fecha Ticket</th>
-              <td>{{ ": " + selectedTicket.fechaticket }}</td>
+              <td>{{ ": " + (selectedTicket.fechaticket !== null ? selectedTicket.fechaticket: "") }}</td>
             </tr>
             <tr>
               <th scope="row">Descripcion</th>
@@ -265,7 +265,7 @@ export default {
     onMounted(async () => {
       isLoading.value = true;
       try {
-        const response = await axios.get('https://smarttechnicalcl.000webhostapp.com/api/ticket');
+        const response = await axios.get('http://54.161.75.90/api/ticket');
         geticket.value = response.data.data;
         console.log(response.data);
       } catch (error) {

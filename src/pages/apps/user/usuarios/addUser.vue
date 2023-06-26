@@ -35,7 +35,21 @@
                     <AppTextField label="Apellido" id="apellido"  v-model="apellidoModal"/>
                   </VCol>
                   <VCol cols="12" md="12">
-                    <AppTextField label="Email" id="email"  v-model="emailModal"/>
+                    <AppTextField
+                        label="RUT"
+                        id="rut"
+                        v-model="rut"
+                        :error-messages="rutError"
+                        @blur="validarRut"
+                      />
+                  </VCol>
+                  <VCol cols="12" md="12">
+                    <AppTextField
+                        label="Correo Electrónico"
+                        v-model="email"
+                        :error-messages="emailError"
+                        @blur="validateEmail"
+                      />
                   </VCol>
                   <!-- 👉 Calendar -->
                   <VCol cols="12" md="12">
@@ -77,9 +91,6 @@ export default {
     const isLoading = ref(false);
     const selectedUser = ref(null);
     const user = ref(null);
-    const nombre = ref("");
-    const apellido = ref("");
-    const email = ref("");
     const opcionRolSeleccionada = ref("");
 
     const desplegableItems = ref([
@@ -110,9 +121,6 @@ export default {
     });
 
     return {
-      nombre,
-      apellido,
-      email,
       opcionRolSeleccionada,
       user,
       users,
@@ -129,19 +137,61 @@ export default {
     return {
       isPanelOpen: false,
       campo1: '',
-      rolMap: {
-        2: 'Secretario',
-        3: 'Tecnico',
-      },
+    
       nombreModal: '',
       apellidoModal: '',
-      emailModal: '',
+      email: '',
+      emailError: '',
+      rut: '',
+      rutError: '',
     };
   },
   methods: {
     togglePanel() {
       this.isPanelOpen = !this.isPanelOpen;
     },
+
+
+    validarRut() {
+      const rutCompleto = this.rut.trim().replace("‐", "-");
+      if (!/^[0-9]+[-|‐]{1}[0-9kK]{1}$/.test(rutCompleto)) {
+        this.rutError = 'RUT inválido';
+      } else {
+        const tmp = rutCompleto.split('-');
+        const digv = tmp[1];
+        const rut = tmp[0];
+        if (digv === 'K') {
+          tmp[1] = 'k';
+        }
+        if (this.dv(rut) !== digv) {
+          this.rutError = 'RUT inválido';
+        } else {
+          this.rutError = '';
+        }
+      }
+    },
+    dv(T) {
+      let M = 0;
+      let S = 1;
+      for (; T; T = Math.floor(T / 10)) {
+        S = (S + (T % 10) * (9 - (M++ % 6))) % 11;
+      }
+      return S ? (S - 1).toString() : 'k';
+    },
+
+    validateEmail() {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (this.email === '') {
+        this.emailError = 'El campo de correo electrónico es obligatorio.';
+      } else if (!emailRegex.test(this.email)) {
+        this.emailError = 'Por favor, introduce un correo electrónico válido.';
+      } else {
+        this.emailError = '';
+      }
+    },
+
+
     agregarUsuarioModal() {
       let id_type = null;
       if (this.opcionRolSeleccionada === "Secretario") {
@@ -149,14 +199,18 @@ export default {
       } else if (this.opcionRolSeleccionada === "Tecnico") {
         id_type = 3;
       }
+      const primeraLetraMayuNombre = this.nombreModal.charAt(0).toUpperCase() + this.nombreModal.slice(1)
+      const primeraLetraMayuApellido = this.apellidoModal.charAt(0).toUpperCase() + this.apellidoModal.slice(1)
+
 
       const formData = {
-        name: this.nombreModal,
-        last_name: this.apellidoModal,
-        email: this.emailModal,
+        name: primeraLetraMayuNombre,
+        last_name: primeraLetraMayuApellido,
+        email: this.email,
+        identification_number: this.rut,
         id_user_type: id_type,
         active: 1,
-        password: 'contrasena',
+        password: primeraLetraMayuNombre + '2023',
       };
 
       axios.post('http://54.161.75.90/api/user', formData)

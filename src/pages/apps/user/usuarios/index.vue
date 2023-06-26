@@ -9,7 +9,7 @@
         <th class="columna">Email</th>
         <th class="columna">Phone</th>
         <th class="columna">Rol</th>
-        <th class="columna">Genero</th>
+        <th class="columna">Identificación</th>
         <th class="columna-chica">Acciones</th>
       </tr>
     </thead>
@@ -27,7 +27,7 @@
           <td>{{ user.email }}</td>
           <td>{{ user.phone }}</td>
           <td>{{ formatNumber(user.id_user_type, rolMap) }}</td>
-          <td>{{ user.gender }}</td>
+          <td>{{ user.identification_number }}</td>
           <td>
             <VBtn density="compact" icon="mdi-eye" @click="openModal2(user)" />
             <VBtn density="compact" icon="mdi-pencil" @click="openModal3" />
@@ -135,7 +135,7 @@ export default {
   },
 
   setup() {
-    const mostrarModal = ref(false);
+
     const users = ref([]);
     const isLoading = ref(false);
     const selectedUser = ref(null);
@@ -145,11 +145,7 @@ export default {
     const email = ref("");
     const rol = ref("");
 
-    const desplegableItems = ref([
-      { id: 1, label: 'Admin' },
-      { id: 2, label: 'Secretario' },
-      { id: 3, label: 'Tecnico' },
-    ]);
+   
 
     const isModalOpen = ref(false);
     const isModalOpen2 = ref(false);
@@ -200,47 +196,7 @@ export default {
     //funcion post para agregar usuario
 
 
-    const agregarUsuario = async () => {
-      const formData = {
-        name: nombre.value,
-        last_name: apellido.value,
-        email: email.value,
-        id_user_type: rol.value,
-        active: true,
-        password: 'admin',
-      }
-
-      try {
-        console.log('data post:', formData)
-
-        // Realizar la solicitud POST a la API
-        await axios.post('http://54.161.75.90/api/user', formData)
-        console.log('flag 1')
-
-        if (response.status === 200) {
-          // Reiniciar los campos del formulario y actualizar la lista de usuarios
-          nombre.value = ''
-          apellido.value = ''
-          email.value = ''
-          rol.value = ''
-          console.log('flag 2 get tbl users')
-          const getUsersResponse = await axios.get('http://54.161.75.90/api/user')
-
-          console.log('tbl user:', getUsersResponse)
-          console.log('data?', getUsersResponse.data.data)
-          users.value = getUsersResponse.data.data
-        } else {
-          console.error('Error al agregar el usuario')
-        }
-
-        // Actualizar la lista de usuarios
-
-      } catch (error) {
-        console.error(error)
-
-      }
-    }
-
+    
     //funcion put para actualizar datos del usuario
 
     return {
@@ -251,12 +207,9 @@ export default {
       user,
       users,
       selectedUser,
-      agregarUsuario,
       eliminarUsuario,
       isLoading,
-      mostrarModal,
-      desplegableItems,
-      isModalOpen,
+
       isModalOpen2,
       isModalOpen3,
       openModal,

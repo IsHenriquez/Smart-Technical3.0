@@ -122,7 +122,7 @@
           </VForm>
         </VCardText>
         <VCardActions>
-          <VBtn @click="">Confirmar</VBtn>
+          <VBtn @click="enviarUsuario">Confirmar</VBtn>
           <VBtn @click="closeModal">Cerrar</VBtn>
         </VCardActions>
       </VCard>
@@ -150,12 +150,6 @@ export default {
     const email = ref("");
     const phone = ref("");
 
-    const desplegableItems = ref([
-      { id: 1, label: 'Admin' },
-      { id: 2, label: 'Secretario' },
-      { id: 3, label: 'Tecnico' },
-    ]);
-
     const isModalOpen = ref(false);
     const isModalOpen2 = ref(false);
     const isModalOpen3 = ref(false);
@@ -170,9 +164,14 @@ export default {
       isModalOpen2.value = true;
     };
 
-    const openModal3 = () => {
-      isModalOpen3.value = true;
-    };
+    const openModal3 = (user) => {
+  selectedUser.value = user;
+  nombre.value = user.name;
+  apellido.value = user.last_name;
+  email.value = user.email;
+  phone.value = user.phone;
+  isModalOpen3.value = true;
+};
 
     const closeModal = () => {
       isModalOpen.value = false;
@@ -212,50 +211,76 @@ export default {
       closeModal();
     };
 
+    //funcion put al modal usuario
+    
+    const enviarUsuario= async () => {
 
-    return {
-      nombre,
-      apellido,
-      email,
-      phone,
-      user,
-      users,
-      selectedUser,
-      isLoading,
-      desplegableItems,
-      isModalOpen,
-      isModalOpen2,
-      isModalOpen3,
-      eliminarUsuario,
-      openModal,
-      closeModal,
-      openModal2,
-      openModal3,
-    };
-  },
-  data() {
-    return {
-      isPanelOpen: false,
-      campo1: '',
-      rolMap: {
-        1: 'Admin',
-        2: 'Secretario',
-        3: 'Tecnico',
+      const datosFormulario = {
+        name: nombre.value,
+        last_name : apellido.value,
+        email: email.value,
+        phone: phone.value,
+        active: 1,
+        password:"BENJA12345",
+        id_user_type: 3
+      };
+
+
+      axios.put(`http://54.161.75.90/api/user/${selectedUser.value.id}`, datosFormulario)
+        .then(response => {
+          console.log('La solicitud PUT se realizó con éxito');
+          console.log('Respuesta:', response.data);
+        })
+        .catch(error => {
+          console.error('Error al realizar la solicitud PUT:', error);
+        });
+        closeModal();
+    }
+
+
+      return {
+        nombre,
+        apellido,
+        email,
+        phone,
+        user,
+        users,
+        selectedUser,
+        isLoading,
+        isModalOpen,
+        isModalOpen2,
+        isModalOpen3,
+        eliminarUsuario,
+        enviarUsuario,
+        openModal,
+        closeModal,
+        openModal2,
+        openModal3,
+      };
+    },
+    data() {
+      return {
+        isPanelOpen: false,
+        campo1: '',
+        rolMap: {
+          1: 'Admin',
+          2: 'Secretario',
+          3: 'Tecnico',
+        },
+      };
+    },
+    methods: {
+      togglePanel() {
+        this.isPanelOpen = !this.isPanelOpen;
       },
-    };
-  },
-  methods: {
-    togglePanel() {
-      this.isPanelOpen = !this.isPanelOpen;
+      formatNumber(value, numberMap) {
+        if (numberMap.hasOwnProperty(value)) {
+          return numberMap[value];
+        }
+        return value;
+      },
     },
-    formatNumber(value, numberMap) {
-      if (numberMap.hasOwnProperty(value)) {
-        return numberMap[value];
-      }
-      return value;
-    },
-  },
-};
+  };
 </script>
 
 <style>

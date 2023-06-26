@@ -35,6 +35,10 @@
                     <AppTextField label="Apellido" id="apellido"  v-model="apellidoModal"/>
                   </VCol>
                   <VCol cols="12" md="12">
+                    <AppTextField label="Teléfono (incluir código de país)" id="phone"  v-model="phoneModal" @keydown="handleKeydown" :error-messages="phoneError"
+                        @blur="handleInput"/>
+                  </VCol>
+                  <VCol cols="12" md="12">
                     <AppTextField
                         label="RUT"
                         id="rut"
@@ -66,7 +70,7 @@
                   <!-- 👉 Form buttons -->
                   <VCol cols="12">
                     <VBtn class="me-3" @click="agregarUsuarioModal">Submit</VBtn>
-                    <VBtn variant="tonal" color="secondary" @click="mostrarModal = false">Cancel</VBtn>
+                    <VBtn variant="tonal" color="secondary" @click="cerrarModalAdd">Cancel</VBtn>
                   </VCol>
                 </VRow>
               </VForm>
@@ -144,6 +148,8 @@ export default {
       emailError: '',
       rut: '',
       rutError: '',
+      phoneModal: '',
+      phoneError: '',
     };
   },
   methods: {
@@ -151,6 +157,19 @@ export default {
       this.isPanelOpen = !this.isPanelOpen;
     },
 
+    handleKeydown(event) {
+      // Verifica si el evento de teclado corresponde a un dígito numérico
+      if (/[A-Za-z+]/.test(event.key)) {
+        event.preventDefault();
+      }
+    },
+
+    async cerrarModalAdd() {
+      this.mostrarModal = false
+
+      location.reload();
+
+    },
 
     validarRut() {
       const rutCompleto = this.rut.trim().replace("‐", "-");
@@ -183,11 +202,22 @@ export default {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
       if (this.email === '') {
-        this.emailError = 'El campo de correo electrónico es obligatorio.';
+        this.emailError = 'El campo de correo electrónico es obligatorio';
       } else if (!emailRegex.test(this.email)) {
-        this.emailError = 'Por favor, introduce un correo electrónico válido.';
+        this.emailError = 'Por favor, introduce un correo electrónico válido';
       } else {
         this.emailError = '';
+      }
+    },
+    handleInput() {
+      const maxLength = 11; // Longitud máxima permitida
+      
+      if (this.phoneModal.length > maxLength) {
+        this.phoneError = 'El largo del número no corresponde'; // Recorta el valor a la longitud máxima
+      } else if (this.phoneModal.length < maxLength) {
+        this.phoneError = 'El largo del número no corresponde';
+      } else if (this.phoneModal.length === maxLength) {
+        this.phoneError = '';
       }
     },
 
@@ -209,6 +239,7 @@ export default {
         email: this.email,
         identification_number: this.rut,
         id_user_type: id_type,
+        phone: this.phoneModal,
         active: 1,
         password: primeraLetraMayuNombre + '2023',
       };

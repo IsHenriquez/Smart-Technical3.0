@@ -86,7 +86,7 @@ export default defineComponent({
 
     async function fetchUserName(userId) {
       try {
-        const response = await axios.get(`https://smarttechnicalcl.000webhostapp.com/api/user/${userId}`);
+        const response = await axios.get(`http://54.161.75.90/api/user/${userId}`);
         const user = response.data.data;
         return `${user.name} ${user.last_name}`;
       } catch (error) {
@@ -122,7 +122,7 @@ export default defineComponent({
     onMounted(async () => {
       isLoading.value = true;
       try {
-        const response = await axios.get("https://smarttechnicalcl.000webhostapp.com/api/position");
+        const response = await axios.get("http://54.161.75.90/api/position");
         users.value = response.data.data;
 
         for (const user of users.value) {

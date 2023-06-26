@@ -4,7 +4,7 @@ import axios from 'axios'
 const axiosIns = axios.create({
 // You can add your headers here
 // ================================
- baseURL: 'https://smarttechnicalcl.000webhostapp.com/api',
+ baseURL: 'http://54.161.75.90/api/',
  timeout: 300000,
  //headers: {"Content-Type": "application/json"}
 })

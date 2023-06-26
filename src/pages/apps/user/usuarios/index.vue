@@ -1,69 +1,5 @@
 <template>
-  <div>
-    <VBtn prepend-icon="tabler-plus" @click="mostrarModal = true">
-      Agregar Usuario
-    </VBtn>
-  </div>
-  <v-expansion-panels>
-    <v-expansion-panel :expand="isPanelOpen" @click="togglePanel">
-      <template v-slot:header>
-        <div class="panel-header">Title</div>
-      </template>
-      <template v-slot:content>
-        <div class="panel-content">
-          <input type="text" placeholder="Campo 1" v-model="campo1" />
-        </div>
-      </template>
-    </v-expansion-panel>
-  </v-expansion-panels>
-  <br>
-  <Transition name="fade">
-    <div v-if="mostrarModal" class="modal-overlay">
-      <div class="modal modal-right">
-        <!-- Contenido del formulario aquí -->
-        <PerfectScrollbar :options="{ wheelPropagation: false }">
-          <VCard flat>
-            <VCardText>
-              <!-- SECTION Form -->
-              <VForm ref="refForm">
-                <VRow>
-                  <!-- 👉 Title -->
-                  <VCol cols="12" md="12">
-                    <AppTextField label="Nombre" id="nombre" />
-                  </VCol>
-                  <VCol cols="12" md="12">
-                    <AppTextField label="Apellido" id="apellido" />
-                  </VCol>
-                  <VCol cols="12" md="12">
-                    <AppTextField label="Email" id="email" />
-                  </VCol>
-                  <!-- 👉 Calendar -->
-                  <VCol cols="12" md="12">
-                    <AppSelect label="Rol" :items="desplegableItems" :item-title="item => item.label" id="rol ">
-                      <template #selection="{ item }">
-                        <div class="align-center">
-                          <VBadge :color="item.raw.color" inline dot class="pa-1 pb-2" />
-                          <span>{{ item.raw.label }}</span>
-                        </div>
-                      </template>
-                    </AppSelect>
-                  </VCol>
-
-                  <!-- 👉 Form buttons -->
-                  <VCol cols="12">
-                    <VBtn type="submit" class="me-3" @click="agregarUsuario">Submit</VBtn>
-                    <VBtn variant="tonal" color="secondary" @click="mostrarModal = false">Cancel</VBtn>
-                  </VCol>
-                </VRow>
-              </VForm>
-              <!-- !SECTION -->
-            </VCardText>
-          </VCard>
-        </PerfectScrollbar>
-      </div>
-    </div>
-  </Transition>
-
+  <addUser/>
   <v-table>
     <thead>
       <tr>
@@ -188,8 +124,16 @@
 <script>
 import axios from 'axios';
 import { onMounted, ref } from 'vue';
+import addUser from './addUser.vue'
 
 export default {
+
+  name: 'App',
+  components: {
+    addUser,
+    
+  },
+
   setup() {
     const mostrarModal = ref(false);
     const users = ref([]);
@@ -234,7 +178,7 @@ export default {
     onMounted(async () => {
       isLoading.value = true;
       try {
-        const response = await axios.get('https://smarttechnicalcl.000webhostapp.com/api/user');
+        const response = await axios.get('http://54.161.75.90/api/user');
         users.value = response.data.data;
       } catch (error) {
         console.error(error);
@@ -245,7 +189,7 @@ export default {
     //funcion delete para eliminar usuario
     const eliminarUsuario = async (userId) => {
       try {
-        await axios.delete(`https://smarttechnicalcl.000webhostapp.com/api/user/${userId}`);
+        await axios.delete(`http://54.161.75.90/api/user/${userId}`);
         users.value = users.value.filter((user) => user.id !== userId);
       } catch (error) {
         console.error(error);
@@ -270,7 +214,7 @@ export default {
         console.log('data post:', formData)
 
         // Realizar la solicitud POST a la API
-        await axios.post('https://smarttechnicalcl.000webhostapp.com/api/user', formData)
+        await axios.post('http://54.161.75.90/api/user', formData)
         console.log('flag 1')
 
         if (response.status === 200) {
@@ -280,7 +224,7 @@ export default {
           email.value = ''
           rol.value = ''
           console.log('flag 2 get tbl users')
-          const getUsersResponse = await axios.get('https://smarttechnicalcl.000webhostapp.com/api/user')
+          const getUsersResponse = await axios.get('http://54.161.75.90/api/user')
 
           console.log('tbl user:', getUsersResponse)
           console.log('data?', getUsersResponse.data.data)

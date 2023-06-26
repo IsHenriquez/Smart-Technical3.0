@@ -109,7 +109,7 @@ export default {
 
 
 
-    axios.post('https://smarttechnicalcl.000webhostapp.com/api/position', formData).then(r => {
+    axios.post('http://54.161.75.90/api/position', formData).then(r => {
       console.log("respuesta:", r.data)
       location.reload();
     })

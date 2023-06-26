@@ -88,7 +88,7 @@ export default {
 
     async function fetchUserName(userId) {
       try {
-        const response = await axios.get(`https://smarttechnicalcl.000webhostapp.com/api/user/${userId}`);
+        const response = await axios.get(`http://54.161.75.90/api/user/${userId}`);
         const user = response.data.data;
         return `${user.name} ${user.last_name}`;
       } catch (error) {
@@ -130,7 +130,7 @@ export default {
        
 
         // Realizar la solicitud POST a la API
-        axios.post('https://smarttechnicalcl.000webhostapp.com/api/announcement', formData).then(r => {
+        axios.post('http://54.161.75.90/api/announcement', formData).then(r => {
       
           location.reload();
 
@@ -146,7 +146,7 @@ export default {
 
     onMounted(async () => {
       try {
-        const response = await axios.get('https://smarttechnicalcl.000webhostapp.com/api/announcement');
+        const response = await axios.get('http://54.161.75.90/api/announcement');
         const respuesta = response.data;
         const array = Object.values(respuesta.data);
         ultimoItem.value = array[array.length - 1];

@@ -29,8 +29,8 @@ const errors = ref({
 })
 
 const refVForm = ref()
-const email = ref('amanda@smarttechnical.com')
-const password = ref('Amanda2023')
+const email = ref('isadora@smarttechnical.com')
+const password = ref('Isadora2023')
 const rememberMe = ref(false)
 
 const login = () => {

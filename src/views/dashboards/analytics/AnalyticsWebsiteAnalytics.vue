@@ -40,7 +40,7 @@ export default {
     fetchUsers() {
       this.isLoading = true;
 
-      axios.get('https://smarttechnicalcl.000webhostapp.com/api/user?active=1')
+      axios.get('http://54.161.75.90/api/user?active=1')
         .then(response => {
           const usuarios_activos = response.data.total;
 

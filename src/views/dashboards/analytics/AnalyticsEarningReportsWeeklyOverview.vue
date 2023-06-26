@@ -49,7 +49,7 @@ export default {
     
     onMounted(async () => {
       try {
-        const response = await axios.get('https://smarttechnicalcl.000webhostapp.com/api/ticket');
+        const response = await axios.get('http://54.161.75.90/api/ticket');
         const respuesta = response.data;
         const array = Object.values(respuesta.data);
         ultimoItem.value = array[array.length - 1];

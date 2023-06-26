@@ -265,7 +265,7 @@ export default {
     onMounted(async () => {
       isLoading.value = true;
       try {
-        const response = await axios.get('https://smarttechnicalcl.000webhostapp.com/api/ticket');
+        const response = await axios.get('http://54.161.75.90/api/ticket');
         geticket.value = response.data.data;
         console.log(response.data);
       } catch (error) {

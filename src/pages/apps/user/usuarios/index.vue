@@ -127,6 +127,9 @@
         </VCardActions>
       </VCard>
     </VDialog>
+
+    <v-alert v-if="alerta.text" closable :text="alerta.text" variant="tonal" type="success"></v-alert>
+
   </div>
 </template>
 
@@ -149,6 +152,7 @@ export default {
     const apellido = ref("");
     const email = ref("");
     const phone = ref("");
+    const alerta = ref({ text: '' });
 
     const isModalOpen = ref(false);
     const isModalOpen2 = ref(false);
@@ -165,13 +169,13 @@ export default {
     };
 
     const openModal3 = (user) => {
-  selectedUser.value = user;
-  nombre.value = user.name;
-  apellido.value = user.last_name;
-  email.value = user.email;
-  phone.value = user.phone;
-  isModalOpen3.value = true;
-};
+      selectedUser.value = user;
+      nombre.value = user.name;
+      apellido.value = user.last_name;
+      email.value = user.email;
+      phone.value = user.phone;
+      isModalOpen3.value = true;
+    };
 
     const closeModal = () => {
       isModalOpen.value = false;
@@ -203,84 +207,85 @@ export default {
           // Actualiza la lista de usuarios después de eliminar
           const getUsersResponse = await axios.get('http://54.161.75.90/api/user');
           users.value = getUsersResponse.data.data;
+          alerta.value = { text: 'Usuario eliminado correctamente', variant: 'success' };
           console.log('Usuario eliminado correctamente');
         }
       } catch (error) {
+        alerta.value = { text: 'Error al eliminar el usuario', variant: 'error' };
         console.error(error);
       }
       closeModal();
     };
 
     //funcion put al modal usuario
-    
-    const enviarUsuario= async () => {
-
+    const enviarUsuario = async () => {
       const datosFormulario = {
         name: nombre.value,
-        last_name : apellido.value,
+        last_name: apellido.value,
         email: email.value,
         phone: phone.value,
-        active: 1,
-        password:"BENJA12345",
-        id_user_type: 3
+        active: selectedUser.value.active,
+        id_user_type: selectedUser.value.id_user_type
       };
-
 
       axios.put(`http://54.161.75.90/api/user/${selectedUser.value.id}`, datosFormulario)
         .then(response => {
+          location.reload();
+          alerta.value = { text: 'Se Actualizo con éxito', variant: 'success' };
           console.log('La solicitud PUT se realizó con éxito');
           console.log('Respuesta:', response.data);
         })
         .catch(error => {
           console.error('Error al realizar la solicitud PUT:', error);
         });
-        closeModal();
+      closeModal();
     }
 
-
-      return {
-        nombre,
-        apellido,
-        email,
-        phone,
-        user,
-        users,
-        selectedUser,
-        isLoading,
-        isModalOpen,
-        isModalOpen2,
-        isModalOpen3,
-        eliminarUsuario,
-        enviarUsuario,
-        openModal,
-        closeModal,
-        openModal2,
-        openModal3,
-      };
-    },
-    data() {
-      return {
-        isPanelOpen: false,
-        campo1: '',
-        rolMap: {
-          1: 'Admin',
-          2: 'Secretario',
-          3: 'Tecnico',
-        },
-      };
-    },
-    methods: {
-      togglePanel() {
-        this.isPanelOpen = !this.isPanelOpen;
+    
+    return {
+      nombre,
+      apellido,
+      email,
+      phone,
+      user,
+      users,
+      selectedUser,
+      isLoading,
+      isModalOpen,
+      isModalOpen2,
+      isModalOpen3,
+      alerta,
+      eliminarUsuario,
+      enviarUsuario,
+      openModal,
+      closeModal,
+      openModal2,
+      openModal3,
+    };
+  },
+  data() {
+    return {
+      isPanelOpen: false,
+      campo1: '',
+      rolMap: {
+        1: 'Admin',
+        2: 'Secretario',
+        3: 'Tecnico',
       },
-      formatNumber(value, numberMap) {
-        if (numberMap.hasOwnProperty(value)) {
-          return numberMap[value];
-        }
-        return value;
-      },
+    };
+  },
+  methods: {
+    togglePanel() {
+      this.isPanelOpen = !this.isPanelOpen;
     },
-  };
+    formatNumber(value, numberMap) {
+      if (numberMap.hasOwnProperty(value)) {
+        return numberMap[value];
+      }
+      return value;
+    },
+  },
+};
 </script>
 
 <style>

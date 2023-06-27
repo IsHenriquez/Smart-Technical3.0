@@ -277,8 +277,9 @@ export default {
   data() {
     return {
       statusMap: {
-        1: 'Abierto',
-        2: 'Cerrado',
+        1: 'Pendiente',
+        2: 'Abierto',
+        3: 'Cerrado',
       },
       priorityMap: {
         3: 'Urgente',

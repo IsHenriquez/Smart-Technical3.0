@@ -1,13 +1,10 @@
 <template>
-
-  <v-card>
-    <h1 style="text-align: center;">Monitoreo en tiempo real Grafana</h1>
-  </v-card>
-    <v-card class="cardPanel iframe-container">
-      
+  <div class="iframe-container">
+    <Vcard class="cardPanel">
+      <h1 style="text-align: center;">Monitoreo en tiempo real Grafana</h1>
       <iframe class="responsive-iframe" src="http://35.203.149.123:3000/d/sF7d-FHZz/smartki-monitoring?orgId=1&from=1687884934301&to=1687886734301"></iframe>
-    </v-card>
-
+    </Vcard>
+  </div>
   <br>
 </template>
 

@@ -63,8 +63,8 @@
             <td>{{ vehicle.description }}</td>
             <td>
               <VBtn density="compact" icon="mdi-eye" @click="openModal2" />
-              <VBtn v-if="usuarioSecr || usuarioAdmin === true" density="compact" icon="mdi-pencil" @click="openModal3" />
-              <VBtn v-if="usuarioAdmin === true" density="compact" icon="mdi-delete" @click="openModal" />
+              <VBtn v-if="usuarioSecr || usuarioAdmin" density="compact" icon="mdi-pencil" @click="openModal3" />
+              <VBtn v-if="usuarioAdmin" density="compact" icon="mdi-delete" @click="openModal(vehicle.id)" />
             </td>
           </tr>
         </tbody>
@@ -80,7 +80,7 @@
         </VCardText>
 
         <VCardActions>
-          <VBtn @click="closeModal">Confirmar</VBtn>
+          <VBtn @click="eliminarVehiculo">Confirmar</VBtn>
           <VBtn @click="closeModal">Cerrar</VBtn>
         </VCardActions>
       </VCard>
@@ -120,81 +120,98 @@
 
 <script>
 import axios from 'axios';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 
 export default {
   setup() {
     const getVehicle = ref([]);
-    const mostrarModal = ref(false)
-    const isModalOpen = ref(false)
-    const isModalOpen2 = ref(false)
-    const isModalOpen3 = ref(false)
+    const mostrarModal = ref(false);
+    const isModalOpen = ref(false);
+    const isModalOpen2 = ref(false);
+    const isModalOpen3 = ref(false);
     const isLoading = ref(false);
+    const selectedVehicle = ref(null);
 
+    const usuarioSecr = ref(false);
+    const usuarioAdmin = ref(false);
 
-    const openModal = () => {
-      isModalOpen.value = true
-    }
-    const openModal2 = () => {
-      isModalOpen2.value = true
-    }
-    const openModal3 = () => {
-      isModalOpen3.value = true
-    }
-
-    const closeModal = () => {
-      isModalOpen.value = false
-      isModalOpen2.value = false
-      isModalOpen3.value = false
-    }
-
-    var usuarioSecr = false
-    var usuarioTec = false
-    var usuarioAdmin = false
-
-    const userData = JSON.parse(localStorage.getItem('userData') || '{}')
-    const userType = (userData && userData.id_user_type) ? userData.id_user_type : null
+    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+    const userType = userData.id_user_type || null;
 
     if (userType === 3) {
-      usuarioSecr = true
-    } else if (userType === 2) {
-      usuarioTec = true
+      usuarioSecr.value = true;
     } else if (userType === 1) {
-      usuarioAdmin = true
+      usuarioAdmin.value = true;
     }
 
-    //funcion get para listar los vehiculos en la tabla
+    const openModal = (vehicleId) => {
+      selectedVehicle.value = getVehicle.value.find((vehicle) => vehicle.id === vehicleId);
+      isModalOpen.value = true;
+    };
+
+    const openModal2 = () => {
+      isModalOpen2.value = true;
+    };
+
+    const openModal3 = () => {
+      isModalOpen3.value = true;
+    };
+
+    const closeModal = () => {
+      isModalOpen.value = false;
+      isModalOpen2.value = false;
+      isModalOpen3.value = false;
+    };
+
+    const eliminarVehiculo = async () => {
+      try {
+        if (selectedVehicle.value !== null && selectedVehicle.value.id) {
+          const vehicleId = selectedVehicle.value.id;
+
+          // solicitud Delete
+          await axios.delete(`http://54.161.75.90/api/vehicle/${vehicleId}`);
+
+          // Actualiza la lista después de eliminar
+          const getVehiclesResponse = await axios.get('http://54.161.75.90/api/vehicle');
+          getVehicle.value = getVehiclesResponse.data.data;
+
+          console.log('Vehiculo eliminado');
+        }
+      } catch (error) {
+        console.error(error);
+      }
+      closeModal();
+    };
+
+    // Función get para listar los vehiculos en la tabla
     onMounted(async () => {
       isLoading.value = true;
       try {
         const response = await axios.get('http://54.161.75.90/api/vehicle');
         getVehicle.value = response.data.data;
-        console.log(response.data);
 
-        await Promise.all(getVehicle.value.map(async (vehicle) => {
-          const vehicleModelId = vehicle.id_vehicle_model;
+        await Promise.all(
+          getVehicle.value.map(async (vehicle) => {
+            const vehicleModelId = vehicle.id_vehicle_model;
 
-          const modelResponse = await axios.get(`http://54.161.75.90/api/vehicle-model/${vehicleModelId}`);
-          const vehicleModelData = modelResponse.data.data;
-          console.log(vehicleModelData);
-          console.log("pointttt");
+            const modelResponse = await axios.get(`http://54.161.75.90/api/vehicle-model/${vehicleModelId}`);
+            const vehicleModelData = modelResponse.data.data;
 
-          vehicle.modelId = vehicleModelData.id;
-          vehicle.brandId = vehicleModelData.id_vehicles_brand;
-          vehicle.modelName = vehicleModelData.name;
+            vehicle.modelId = vehicleModelData.id;
+            vehicle.brandId = vehicleModelData.id_vehicles_brand;
+            vehicle.modelName = vehicleModelData.name;
 
-          const brandResponse = await axios.get(`http://54.161.75.90/api/vehicle-brand/${vehicleModelData.id_vehicles_brand}`);
-          const brandData = brandResponse.data.data;
-          console.log(brandData);
-          vehicle.brandName = brandData.name;
-        }));
+            const brandResponse = await axios.get(`http://54.161.75.90/api/vehicle-brand/${vehicleModelData.id_vehicles_brand}`);
+            const brandData = brandResponse.data.data;
 
+            vehicle.brandName = brandData.name;
+          })
+        );
       } catch (error) {
         console.error(error);
       }
       isLoading.value = false;
     });
-
 
     return {
       mostrarModal,
@@ -206,13 +223,14 @@ export default {
       openModal2,
       openModal3,
       isLoading,
+      eliminarVehiculo,
+      selectedVehicle,
       getVehicle,
       usuarioSecr,
-      usuarioTec,
-      usuarioAdmin
-    }
+      usuarioAdmin,
+    };
   },
-}
+};
 </script>
 
 <style>

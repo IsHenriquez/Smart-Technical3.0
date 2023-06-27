@@ -13,6 +13,15 @@ import panel6 from "@/views/apps/grafana/panel6.vue"
 </script>
 
 <template>
+  <div>
+    <VCard class="cardPanel">
+      <h1 style="text-align: center;">Monitoreo en tiempo real Grafana</h1>
+      <iframe src="http://35.203.149.123:3000/d/sF7d-FHZz/smartki-monitoring?orgId=1&from=1687884934301&to=1687886734301"
+        style="width: 1000px;  height: 650px;"></iframe>
+    </VCard>
+  </div>
+  <br>
+
   <VRow class="match-height">
 
     <VCol cols="12" md="6" sm="6">
@@ -55,5 +64,12 @@ import panel6 from "@/views/apps/grafana/panel6.vue"
 
 .textTitleCard {
   padding-inline-start: 10px;
+}
+
+.cardPanel {
+  inline-size: 1020px;
+  padding-block-start: 10px;
+  padding-inline-start: 10px;
+  transform: translateX(10%);
 }
 </style>

@@ -1,74 +1,6 @@
 <template>
-  <div>
-    <VBtn prepend-icon="tabler-plus" @click="mostrarModal = true">
-      Agregar Ticket
-    </VBtn>
-  </div>
-  <br>
-  <Transition name="fade">
-    <div v-if="mostrarModal" class="modal-overlay">
-      <div class="modal modal-right">
-        <!-- Contenido del formulario aquí -->
-        <PerfectScrollbar :options="{ wheelPropagation: false }">
-          <VCard flat>
-            <VCardText>
-              <!-- SECTION Form -->
-              <VForm ref="refForm">
-                <VRow>
-                  <!-- 👉 Title -->
-                  <VCol cols="12" md="12">
-                    <AppTextField label="Titulo" v-model="selectedTicket.title" ref="titleField" />
-                  </VCol>
-                  <VCol cols="12" md="12">
-                    <AppSelect label="Prioridad" :items="desplegableItems" :item-title="item => item.label"
-                      v-model="selectedTicket.priorityticket" ref="priorityField">
-                      <template #selection="{ item }">
-                        <div class="align-center">
-                          <VBadge :color="item.raw.color" inline dot class="pa-1 pb-2" />
-                          <span>{{ item.raw.label }}</span>
-                        </div>
-                      </template>
-                    </AppSelect>
-                  </VCol>
-                  <VCol cols="12" md="12">
-                    <AppSelect label="Tipo Ticket" :items="desplegable" :item-title="item => item.label"
-                      v-model="selectedTicket.typeticket" ref="typeField">
-                      <template #selection="{ item }">
-                        <div class="align-center">
-                          <VBadge :color="item.raw.color" inline dot class="pa-1 pb-2" />
-                          <span>{{ item.raw.label }}</span>
-                        </div>
-                      </template>
-                    </AppSelect>
-                  </VCol>
-                  <VCol cols="12" md="12">
-                    <AppTextField label="Categoria" v-model="selectedTicket.categoryticket" ref="categoryField" />
-                  </VCol>
-                  <VCol cols="12" md="12">
-                    <AppTextField label="Fecha Ticket" v-model="selectedTicket.fechaticket" ref="dateField" />
-                  </VCol>
-
-
-                  <!-- 👉 Description -->
-                  <VCol cols="12">
-                    <AppTextarea label="Descripción" v-model="selectedTicket.description" ref="descriptionField" />
-                  </VCol>
-
-                  <!-- 👉 Form buttons -->
-                  <VCol cols="12">
-                    <VBtn type="submit" class="me-3" @click="agregarUsuario">Submit</VBtn>
-                    <VBtn variant="tonal" color="secondary" @click="mostrarModal = false">Cancel</VBtn>
-                  </VCol>
-                </VRow>
-              </VForm>
-              <!-- !SECTION -->
-            </VCardText>
-          </VCard>
-        </PerfectScrollbar>
-      </div>
-    </div>
-  </Transition>
-
+  
+<addTicket/>
   <v-table class="table">
     <thead>
       <tr>
@@ -210,8 +142,13 @@
 <script>
 import axios from 'axios';
 import { onMounted, ref } from 'vue';
+import addTicket from './addTicket.vue'
 
 export default {
+  name: 'App',
+  components: {
+    addTicket,
+  },
   setup() {
     const mostrarModal = ref(false);
     const geticket = ref([]);
@@ -344,9 +281,9 @@ export default {
         2: 'Cerrado',
       },
       priorityMap: {
-        1: 'Urgente',
+        3: 'Urgente',
         2: 'Media',
-        3: 'Baja'
+        1: 'Baja'
       },
       typeMap: {
         1: 'Tickets',

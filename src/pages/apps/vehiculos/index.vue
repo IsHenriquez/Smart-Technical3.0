@@ -22,7 +22,7 @@
             <td>{{ vehicle.modelName }}</td>
             <td>{{ formatNumber(vehicle.is_busy, busyMap) }}</td> 
             <td>
-              <VBtn density="compact" icon="mdi-eye" @click="openModal2" />
+              <VBtn density="compact" icon="mdi-eye" @click="openModal2(vehicle)" />
               <VBtn v-if="usuarioSecr || usuarioAdmin" density="compact" icon="mdi-pencil" @click="openModal3" />
               <VBtn v-if="usuarioAdmin" density="compact" icon="mdi-delete" @click="openModal(vehicle.id)" />
             </td>
@@ -48,15 +48,41 @@
 
     <!-- Modal de botón ver usuario -->
     <VDialog v-model="isModalOpen2" @click:outside="closeModal">
-      <VCard class="confirmation">
-        <VCardTitle>Detalle Vehiculos</VCardTitle>
+      <VCard class="confirmation3">
+        <VCardTitle style="text-align: center;">Detalle del Usuario</VCardTitle>
         <VCardText>
-          Ver Vehiculos
-          <!-- Contenido del modal -->
+          <v-table>
+            <tbody>
+              <tr class="tableUser">
+                <th scope="row">ID</th>
+                <td>{{ ": " + selectedUser.id }}</td>
+              </tr>
+              <tr>
+                <th scope="row">Nombre</th>
+                <td>{{ ": " + selectedUser.name }}</td>
+              </tr>
+              <tr>
+                <th scope="row">Apellido</th>
+                <td>{{ ": " + selectedUser.last_name }}</td>
+              </tr>
+              <tr>
+                <th scope="row">Email</th>
+                <td>{{ ": " + selectedUser.email }}</td>
+              </tr>
+              <tr>
+                <th scope="row">Rol</th>
+                <td>{{ ": " + formatNumber(selectedUser.id_user_type, rolMap) }}</td>
+              </tr>
+              <tr>
+                <th scope="row">Rut</th>
+                <td>{{ ": " + (selectedUser.identification_number !== null ? selectedUser.identification_number : '') }}
+                </td>
+              </tr>
+            </tbody>
+          </v-table>
         </VCardText>
         <VCardActions>
-          <VBtn @click="closeModal">Confirmar</VBtn>
-          <VBtn @click="closeModal">Cerrar</VBtn>
+          <VBtn @click="closeModal" style="transform: translateX(590%);">Cerrar</VBtn>
         </VCardActions>
       </VCard>
     </VDialog>

@@ -49,6 +49,7 @@
             <th class="columna">ID</th>
             <th class="columna">Patente</th>
             <th class="columna">Marca</th>
+            <th class="columna">Model</th>
             <th class="columna">Descripcion</th>
             <th class="columna-id">Acciones</th>
           </tr>
@@ -57,7 +58,8 @@
           <tr v-for="vehicle in getVehicle" :key="vehicle.id">
             <td>{{ vehicle.id }}</td>
             <td>{{ vehicle.plate }}</td>
-            <td>{{ vehicle.brand }}</td>
+            <td>{{ vehicle.brandName }}</td>
+            <td>{{ vehicle.modelName }}</td>
             <td>{{ vehicle.description }}</td>
             <td>
               <VBtn density="compact" icon="mdi-eye" @click="openModal2" />
@@ -117,8 +119,8 @@
 </template>
 
 <script>
-import { ref } from 'vue'
-import axios from 'axios'
+import axios from 'axios';
+import { ref } from 'vue';
 
 export default {
   setup() {
@@ -169,12 +171,30 @@ export default {
         getVehicle.value = response.data.data;
         console.log(response.data);
 
-        
+        await Promise.all(getVehicle.value.map(async (vehicle) => {
+          const vehicleModelId = vehicle.id_vehicle_model;
+
+          const modelResponse = await axios.get(`http://54.161.75.90/api/vehicle-model/${vehicleModelId}`);
+          const vehicleModelData = modelResponse.data.data;
+          console.log(vehicleModelData);
+          console.log("pointttt");
+
+          vehicle.modelId = vehicleModelData.id;
+          vehicle.brandId = vehicleModelData.id_vehicles_brand;
+          vehicle.modelName = vehicleModelData.name;
+
+          const brandResponse = await axios.get(`http://54.161.75.90/api/vehicle-brand/${vehicleModelData.id_vehicles_brand}`);
+          const brandData = brandResponse.data.data;
+          console.log(brandData);
+          vehicle.brandName = brandData.name;
+        }));
+
       } catch (error) {
         console.error(error);
       }
       isLoading.value = false;
     });
+
 
     return {
       mostrarModal,

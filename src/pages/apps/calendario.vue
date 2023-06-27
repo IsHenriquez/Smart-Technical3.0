@@ -10,27 +10,16 @@
     ></v-combobox>
     <VCol>
     <VRow class="filtros">
-      <VBtn class="botoncitosFiltro" @click="mostrarModal = true">
+      <VBtn class="botoncitosFiltro" @click="filtrarCalendario">
         Filtrar
       </VBtn>
       <VBtn class="botoncitosFiltro" @click="clearCombobox">
         Limpiar
       </VBtn>
-      <v-checkbox
-        class="checkboxFiltro"
-        v-model="checkbox1"
-        label="Personal"
-        color="error"
-        @change="handleCheckbox1Change"
-      ></v-checkbox>
-
-      <v-checkbox
-        class="checkboxFiltro"
-        v-model="checkbox2"
-        label="Trabajo"
-        color="info"
-        @change="handleCheckbox2Change"
-      ></v-checkbox>
+    <VRow>
+      <div class="alignDown"><VIcon class="circuloAzul" color="blue">mdi-circle</VIcon> Trabajo</div>
+      <div class="alignDown"><VIcon class="circuloRojo" color="blue">mdi-circle</VIcon> Personal</div>
+    </VRow>
     </VRow>
   </VCol>
     <div class="space-y-2">
@@ -45,72 +34,118 @@
 
 <script>
 import axios from 'axios';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 
 export default {
   setup() {
 
 
 
-    const attributes = ref([
-  {
-    // Boolean
-    dot: true,
-    dates: [
-      new Date(2018, 0, 1),
-      new Date(2018, 0, 10),
-      new Date(2018, 0, 22),
-    ],
-  },
-  {
-    // String
-    dot: 'red',
-    dates: [
-      new Date(2018, 0, 4),
-      new Date(2018, 0, 10),
-      new Date(2018, 0, 15),
-    ],
-  },
-
-]);
 
     const selectedOption = ref(null);
     const users = ref([]);
     const isDark = ref(false);
-    const checkbox1 = ref(false);
-    const checkbox2 = ref(false);
+    const checkbox1 = true
+    const checkbox2 = true
     const names = ref([]);
 
-    function handleCheckbox1Change() {
-      if (checkbox1.value) {
-        checkbox2.value = false;
-      }
-    }
+    
+    
+    
 
-    function handleCheckbox2Change() {
-      if (checkbox2.value) {
-        checkbox1.value = false;
-      }
-    }
 
     function clearCombobox() {
       selectedOption.value = null;
-      checkbox1.value = null;
-      checkbox2.value = null;
+     
+
+      user_id_actual = (userData && userData.id) ? userData.id : null
+      generarCalendario()
     }
 
-    axios.get('https://smarttechnicalcl.000webhostapp.com/api/user').then(response => {
+    function filtrarCalendario() {
+      console.log(selectedOption.value)
+      axios.get(`http://54.161.75.90/api/user?filter=[{"operator":"=","value":"${selectedOption.value}","property":"name"}]`).then(response => {
+        const idTemp = response.data.data[0].id
+        console.log("respuesta", response.data.data[0].id)
+
+        user_id_actual = idTemp
+        generarCalendario()
+
+      })
+      
+    }
+
+    axios.get('http://54.161.75.90/api/user').then(response => {
       users.value = response.data.data;
+      
       names.value = users.value.map(user => user.name);
+
+      
+    });
+   
+
+    const userData = JSON.parse(localStorage.getItem('userData') || '{}')
+    var user_id_actual = (userData && userData.id) ? userData.id : null
+
+    
+
+    const attributes = ref([]);
+
+    function generarCalendario() {
+      axios.get(`http://54.161.75.90/api/event-list?id_user=${user_id_actual}`)
+        .then(response => {
+          const data = response.data;
+          const titlesArray = [];
+          const fechaArray = [];
+          const tempColorArray = [];
+          const transformedArray = [];
+
+          if (data.success && Array.isArray(data.data)) {
+            for (const item of data.data) {
+              titlesArray.push(item.title);
+              fechaArray.push(item.fecha_realizar_servicio);
+              tempColorArray.push(item.id_type);
+            }
+
+            for (let i = 0; i < tempColorArray.length; i++) {
+              if (tempColorArray[i] === 1) {
+                transformedArray[i] = "blue";
+              } else if (tempColorArray[i] === 2) {
+                transformedArray[i] = "red";
+              }
+            }
+
+            fechaArray.forEach((fecha, index, array) => {
+              const [day, month, year] = fecha.split("-");
+                const adjustedMonth = parseInt(month) - 1;
+                array[index] = `${year}-${adjustedMonth}-${day}`;
+                });
+
+            attributes.value = [
+              ...titlesArray.map((title, index) => ({
+                dates: new Date(fechaArray[index]),
+                dot: {
+                  color: transformedArray[index],
+                },
+                popover: {
+                  label: titlesArray[index]
+                },
+                
+              })),
+            ];
+          }
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    }
+
+    onMounted(() => {
+      generarCalendario()
     });
 
-    const user_id_actual = JSON.parse(localStorage.getItem('userData.id'))
-
-    axios.get(`https://smarttechnicalcl.000webhostapp.com/api/ticket/${user_id_actual}`).then(response => {
-
-    })
-
-    axios.get()
+    
+        
 
     return {
       selectedOption,
@@ -118,17 +153,34 @@ export default {
       isDark,
       checkbox1,
       checkbox2,
-      handleCheckbox1Change,
-      handleCheckbox2Change,
       names,
       clearCombobox,
-      attributes
+      attributes,
+      filtrarCalendario,
+      generarCalendario
     };
   }
 }
 </script>
 
 <style>
+
+.circuloAzul {
+  font-size: 24px;
+  margin-left: 10px;
+  color: rgb(45, 45, 211);
+}
+
+.circuloRojo {
+  font-size: 24px;
+  margin-left: 10px;
+  color: rgb(211, 45, 45);
+}
+
+.alignDown{
+  padding-top: 38px;
+}
+
 .checkboxFiltro,
 .calendario,
 .botoncitosFiltro {
@@ -161,5 +213,7 @@ export default {
     padding-inline-start: 0;
     margin-top: 20px;
   }
+
+  
 }
 </style>

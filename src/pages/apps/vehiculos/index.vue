@@ -49,22 +49,19 @@
             <th class="columna">ID</th>
             <th class="columna">Patente</th>
             <th class="columna">Marca</th>
-            <th class="columna">Modelo</th>
-            <th class="columna">Usuario</th>
+            <th class="columna">Descripcion</th>
             <th class="columna-id">Acciones</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="dato in datos" :key="dato.id">
-            <td>{{ dato.id }}</td>
-            <td>{{ dato.patente }}</td>
-            <td>{{ dato.marca }}</td>
-            <td>{{ dato.modelo }}</td>
-            <td>{{ dato.usuario }}</td>
+          <tr v-for="vehicle in getVehicle" :key="vehicle.id">
+            <td>{{ vehicle.id }}</td>
+            <td>{{ vehicle.plate }}</td>
+            <td>{{ vehicle.brand }}</td>
+            <td>{{ vehicle.description }}</td>
             <td>
               <VBtn density="compact" icon="mdi-eye" @click="openModal2" />
-              <VBtn v-if="usuarioSecr || usuarioAdmin === true" density="compact" icon="mdi-pencil"
-                @click="openModal3" />
+              <VBtn v-if="usuarioSecr || usuarioAdmin === true" density="compact" icon="mdi-pencil" @click="openModal3" />
               <VBtn v-if="usuarioAdmin === true" density="compact" icon="mdi-delete" @click="openModal" />
             </td>
           </tr>
@@ -121,15 +118,17 @@
 
 <script>
 import { ref } from 'vue'
+import axios from 'axios'
 
 export default {
   setup() {
+    const getVehicle = ref([]);
     const mostrarModal = ref(false)
-    const datos = ref([])
-
     const isModalOpen = ref(false)
     const isModalOpen2 = ref(false)
     const isModalOpen3 = ref(false)
+    const isLoading = ref(false);
+
 
     const openModal = () => {
       isModalOpen.value = true
@@ -162,16 +161,23 @@ export default {
       usuarioAdmin = true
     }
 
-    // Agregar datos estáticos al array `datos`
-    datos.value = [
-      { id: 1, patente: 'ABC123', marca: 'BMW', modelo: 'BMW XM 2023', usuario: 'Usuario 1' },
-      { id: 2, patente: 'DEF456', marca: 'Bentley', modelo: 'BENTAYGA', usuario: 'Usuario 2' },
-      { id: 3, patente: 'GHI789', marca: 'Chevrolet', modelo: 'Corvette', usuario: 'Usuario 3' }
-    ]
+    //funcion get para listar los vehiculos en la tabla
+    onMounted(async () => {
+      isLoading.value = true;
+      try {
+        const response = await axios.get('http://54.161.75.90/api/vehicle');
+        getVehicle.value = response.data.data;
+        console.log(response.data);
+
+        
+      } catch (error) {
+        console.error(error);
+      }
+      isLoading.value = false;
+    });
 
     return {
       mostrarModal,
-      datos,
       isModalOpen,
       isModalOpen2,
       isModalOpen3,
@@ -179,6 +185,8 @@ export default {
       closeModal,
       openModal2,
       openModal3,
+      isLoading,
+      getVehicle,
       usuarioSecr,
       usuarioTec,
       usuarioAdmin

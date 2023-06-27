@@ -89,7 +89,7 @@
         </tr>
       </template>
       <template v-else>
-        <tr v-for="ticket in geticket" :key="ticket.id">
+        <tr v-for="ticket in filteredTickets" :key="ticket.id">
           <td>{{ ticket.id }}</td>
           <td>{{ ticket.title }}</td>
           <td>{{ formatNumber(ticket.id_status, statusMap) }}</td>
@@ -224,8 +224,8 @@ export default {
       { id: 3, label: 'Baja' },
     ]);
     const desplegable = ref([
-      { id: 1, label: 'Cita' },
-      { id: 2, label: 'Tickets' },
+      { id: 1, label: 'Tickets' },
+      { id: 2, label: 'Cita' },
     ]);
 
     const isModalOpen = ref(false);
@@ -259,7 +259,9 @@ export default {
       isModalOpen3.value = false;
     };
 
-
+    const filteredTickets = computed(() => {
+      return geticket.value.filter((ticket) => ticket.id_category === 1);
+    });
 
     //funcion get para listar los usuarios en la tabla
     onMounted(async () => {
@@ -331,6 +333,7 @@ export default {
       openModal3,
       closeModal,
       agregarUsuario,
+      filteredTickets,
     };
 
   },
@@ -350,8 +353,8 @@ export default {
         2: 'Citas',
       },
       categoryMap: {
-        1: 'Tickets',
-        2: 'Citas',
+        1: 'Trabajo',
+        2: 'Personal',
       }
     };
   },

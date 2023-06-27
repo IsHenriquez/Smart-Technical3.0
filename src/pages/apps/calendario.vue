@@ -16,11 +16,16 @@
       <VBtn class="botoncitosFiltro" @click="clearCombobox">
         Limpiar
       </VBtn>
+      
+      
     <VRow>
       <div class="alignDown"><VIcon class="circuloAzul" color="blue">mdi-circle</VIcon> Trabajo</div>
       <div class="alignDown"><VIcon class="circuloRojo" color="blue">mdi-circle</VIcon> Personal</div>
+      
     </VRow>
+    <addCalendar/>
     </VRow>
+    
   </VCol>
     <div class="space-y-2">
       <VCalendar :initial-page="{ month: 6, year: 2023 }" expanded :is-dark="isDark" :attributes="attributes" class="calendario" />
@@ -35,8 +40,14 @@
 <script>
 import axios from 'axios';
 import { ref, onMounted } from 'vue';
+import addCalendar from './addCalendar.vue'
 
 export default {
+  name: 'App',
+  components: {
+    addCalendar,
+  },
+
   setup() {
 
 
@@ -117,7 +128,7 @@ export default {
 
             fechaArray.forEach((fecha, index, array) => {
               const [day, month, year] = fecha.split("-");
-                const adjustedMonth = parseInt(month) - 1;
+                const adjustedMonth = parseInt(month);
                 array[index] = `${year}-${adjustedMonth}-${day}`;
                 });
 

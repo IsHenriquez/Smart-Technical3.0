@@ -16,6 +16,8 @@ import { createPinia } from 'pinia'
 import { createApp } from 'vue'
 import VCalendar from 'v-calendar';
 import 'v-calendar/style.css';
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css'
 
 
 loadFonts()
@@ -23,6 +25,7 @@ loadFonts()
 
 // Create vue app
 const app = createApp(App)
+app.component('VueDatePicker', VueDatePicker);
 
 
 // Use plugins

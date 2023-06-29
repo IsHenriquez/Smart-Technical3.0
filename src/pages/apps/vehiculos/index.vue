@@ -1,46 +1,6 @@
 <template>
   <div>
-    <div>
-      <VBtn prepend-icon="tabler-plus" @click="mostrarModal = true">
-        Agregar Vehiculo
-      </VBtn>
-    </div>
-    <Transition name="fade">
-      <div v-if="mostrarModal" class="modal-overlay">
-        <div class="modal modal-right">
-          <!-- Contenido del formulario aquí -->
-          <PerfectScrollbar :options="{ wheelPropagation: false }">
-            <VCard flat>
-              <VCardText>
-                <!-- SECTION Form -->
-                <VForm ref="refForm">
-                  <VRow>
-                    <!-- 👉 Title -->
-                    <VCol cols="12">
-                      <AppTextField label="Patente" />
-                    </VCol>
-                    <VCol cols="12">
-                      <AppTextField label="Marca" />
-                    </VCol>
-                    <VCol cols="12">
-                      <AppTextField label="Modelo" />
-                    </VCol>
-
-                    <!-- 👉 Form buttons -->
-                    <VCol cols="12">
-                      <VBtn type="submit" class="me-3">Submit</VBtn>
-                      <VBtn variant="tonal" color="secondary" @click="mostrarModal = false">Cancel</VBtn>
-                    </VCol>
-                  </VRow>
-                </VForm>
-                <!-- !SECTION -->
-              </VCardText>
-            </VCard>
-          </PerfectScrollbar>
-        </div>
-      </div>
-    </Transition>
-
+    <addVehicle/>
     <div>
       <br>
       <v-table>
@@ -49,8 +9,8 @@
             <th class="columna">ID</th>
             <th class="columna">Patente</th>
             <th class="columna">Marca</th>
-            <th class="columna">Model</th>
-            <th class="columna">Descripcion</th>
+            <th class="columna">Modelo</th>
+            <th class="columna">Ocupado</th>
             <th class="columna-id">Acciones</th>
           </tr>
         </thead>
@@ -60,7 +20,7 @@
             <td>{{ vehicle.plate }}</td>
             <td>{{ vehicle.brandName }}</td>
             <td>{{ vehicle.modelName }}</td>
-            <td>{{ vehicle.description }}</td>
+            <td>{{ formatNumber(vehicle.is_busy, busyMap) }}</td> 
             <td>
               <VBtn density="compact" icon="mdi-eye" @click="openModal2(vehicle)" />
               <VBtn v-if="usuarioSecr || usuarioAdmin" density="compact" icon="mdi-pencil" @click="openModal3" />
@@ -147,8 +107,13 @@
 <script>
 import axios from 'axios';
 import { onMounted, ref } from 'vue';
+import addVehicle from './addVehicle.vue'
 
 export default {
+  name: 'App',
+  components: {
+    addVehicle,
+  },
   setup() {
     const getVehicle = ref([]);
     const mostrarModal = ref(false);
@@ -257,6 +222,22 @@ export default {
       usuarioAdmin,
     };
   },
+  data() {
+    return {
+      busyMap: {
+        0: 'Libre',
+        1: 'Ocupado',
+      },
+    }
+  },
+  methods: {
+    formatNumber(value, numberMap) {
+      if (numberMap.hasOwnProperty(value)) {
+        return numberMap[value];
+      }
+      return value;
+    },
+  }
 };
 </script>
 

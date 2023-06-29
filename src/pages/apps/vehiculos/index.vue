@@ -207,6 +207,7 @@ export default {
         console.error(error);
       }
       closeModal();
+      location.reload();
     };
 
     // Función get para listar los vehiculos en la tabla

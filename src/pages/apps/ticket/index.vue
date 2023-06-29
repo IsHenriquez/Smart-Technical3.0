@@ -1,6 +1,5 @@
 <template>
-  
-<addTicket/>
+  <addTicket />
   <v-table class="table">
     <thead>
       <tr>
@@ -32,7 +31,7 @@
           <td>
             <VBtn density="compact" icon="mdi-eye" @click="openModal2(ticket)" />
             <VBtn density="compact" icon="mdi-pencil" @click="openModal3" />
-            <VBtn density="compact" icon="mdi-delete" @click="openModal" />
+            <VBtn density="compact" icon="mdi-delete" @click="openModal(ticket.id)" />
           </td>
         </tr>
       </template>
@@ -47,7 +46,7 @@
       </VCardText>
 
       <VCardActions>
-        <VBtn @click="">Confirmar</VBtn>
+        <VBtn @click="eliminarTicket">Confirmar</VBtn>
         <VBtn @click="closeModal">Cerrar</VBtn>
       </VCardActions>
     </VCard>
@@ -86,7 +85,7 @@
             </tr>
             <tr>
               <th scope="row">Fecha Ticket</th>
-              <td>{{ ": " + (selectedTicket.fechaticket !== null ? selectedTicket.fechaticket: "") }}</td>
+              <td>{{ ": " + (selectedTicket.fechaticket !== null ? selectedTicket.fechaticket : "") }}</td>
             </tr>
             <tr>
               <th scope="row">Descripcion</th>
@@ -142,7 +141,7 @@
 <script>
 import axios from 'axios';
 import { onMounted, ref } from 'vue';
-import addTicket from './addTicket.vue'
+import addTicket from './addTicket.vue';
 
 export default {
   name: 'App',
@@ -169,7 +168,8 @@ export default {
     const isModalOpen2 = ref(false);
     const isModalOpen3 = ref(false);
 
-    const openModal = () => {
+    const openModal = (ticketId) => {
+      selectedTicket.value = geticket.value.find((ticket) => ticket.id === ticketId);
       isModalOpen.value = true;
     };
 
@@ -214,6 +214,27 @@ export default {
     });
 
     //funcion delete para eliminar tickets
+    const eliminarTicket = async () => {
+      try {
+        if (selectedTicket.value !== null && selectedTicket.value.id) {
+          const ticketId = selectedTicket.value.id;
+
+          // solicitud Delete
+          await axios.delete(`http://54.161.75.90/api/ticket/${ticketId}`);
+
+          // Actualiza la lista después de eliminar
+          const getTicketResponse = await axios.get('http://54.161.75.90/api/ticket');
+          geticket.value = getTicketResponse.data.data;
+
+          console.log('Ticket eliminado');
+        }
+      } catch (error) {
+        console.error(error);
+      }
+      closeModal();
+      location.reload();
+    }
+
 
     //funcion put para actualizar datos del ticket
 
@@ -222,38 +243,20 @@ export default {
 
     //funcion post para agregar ticker nuevo
     function agregarUsuario() {
-  // Obtener una referencia al formulario utilizando la referencia "refForm"
-  const form = this.$refs.refForm;
+      // Obtener una referencia al formulario utilizando la referencia "refForm"
+      const form = this.$refs.refForm;
 
-  // Verificar si el formulario es válido antes de enviar los datos
-  if (form && form.validate && form.validate()) {
-    // Obtener los valores de los campos del formulario dinámicamente
-    const formData = {};
-    for (const key in this.selectedTicket) {
-      if (this.selectedTicket.hasOwnProperty(key)) {
-        formData[key] = this.selectedTicket[key];
+      // Verificar si el formulario es válido antes de enviar los datos
+      if (form && form.validate && form.validate()) {
+        // Obtener los valores de los campos del formulario dinámicamente
+        const formData = {};
+        for (const key in this.selectedTicket) {
+          if (this.selectedTicket.hasOwnProperty(key)) {
+            formData[key] = this.selectedTicket[key];
+          }
+        }
       }
     }
-
-    // Crear un objeto con los valores obtenidos
-    const data = {
-      "success": true,
-      "data": [formData]
-    };
-
-    // Enviar la solicitud POST con los datos del formulario
-    axios.post('https://smarttechnicalcl.000webhostapp.com/api/ticket', data)
-      .then(response => {
-        console.log(response);
-        // Manejar la respuesta de la solicitud POST
-      })
-      .catch(error => {
-        console.error(error);
-        // Manejar el error en caso de que ocurra
-      });
-  }
-}
-
 
     return {
       mostrarModal,
@@ -271,6 +274,7 @@ export default {
       closeModal,
       agregarUsuario,
       filteredTickets,
+      eliminarTicket,
     };
 
   },

@@ -30,7 +30,7 @@
           <td>{{ ticket.fecha_realizar_servicio }}</td>
           <td>
             <VBtn density="compact" icon="mdi-eye" @click="openModal2(ticket)" />
-            <VBtn density="compact" icon="mdi-pencil" @click="openModal3" />
+            <VBtn density="compact" icon="mdi-pencil" @click="openModal3(ticket)" />
             <VBtn density="compact" icon="mdi-delete" @click="openModal(ticket.id)" />
           </td>
         </tr>
@@ -110,37 +110,42 @@
           <VRow>
             <!-- 👉 Title -->
             <VCol cols="12" md="12" class="editform">
-              <AppTextField label="Title" />
+              <AppTextField label="Title" v-model="titulo" />
             </VCol>
-            <VCol cols="12" md="12" class="editform">
-              <AppTextField label="Estado" />
+            <VCol cols="12" md="12">
+              <AppSelect label="Estado" :items="desplegableItems1" :item-title="item => item.label" v-model="estado" />
             </VCol>
-            <VCol cols="12" md="12" class="editform">
-              <AppTextField label="Prioridad" />
+            <VCol cols="12" md="12">
+              <AppSelect label="Prioridad" :items="desplegableItems" :item-title="item => item.label"
+                v-model="prioridad" />
             </VCol>
-            <VCol cols="12" md="12" class="editform">
-              <AppTextField label="Tipo Ticket" />
+            <VCol cols="12" md="12">
+              <AppSelect label="Tipo Ticket" :items="desplegable" :item-title="item => item.label" v-model="tipoTicket" />
             </VCol>
-            <VCol cols="12" md="12" class="editform">
-              <AppTextField label="Fecha Inicio" />
+            <VCol cols="12" md="12">
+              <label for="datepicker">Fecha realizar servicio</label>
+              <VueDatePicker v-model="fechaServicio" :enable-time-picker="false" class="custom-datepicker"
+                model-type="yyyy-MM-dd">
+              </VueDatePicker>
             </VCol>
             <VCol cols="12">
-              <AppTextarea label="Descripción" />
+              <AppTextarea label="Descripción" v-model="descripcion" />
             </VCol>
           </VRow>
         </VForm>
       </VCardText>
       <VCardActions>
-        <VBtn @click="closeModal">Confirmar</VBtn>
+        <VBtn @click="enviarTicket">Confirmar</VBtn>
         <VBtn @click="closeModal">Cerrar</VBtn>
       </VCardActions>
     </VCard>
   </VDialog>
+  <v-alert v-if="alerta.text" closable :text="alerta.text" variant="tonal" type="success"></v-alert>
 </template>
 
 <script>
 import axios from 'axios';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import addTicket from './addTicket.vue';
 
 export default {
@@ -149,15 +154,25 @@ export default {
     addTicket,
   },
   setup() {
-    const mostrarModal = ref(false);
     const geticket = ref([]);
     const isLoading = ref(false);
     const selectedTicket = ref({});
+    const titulo = ref("");
+    const estado = ref("");
+    const prioridad = ref("");
+    const tipoTicket = ref("");
+    const descripcion = ref("");
+    const fechaServicio = ref("");
+    const alerta = ref({ text: '' });
 
     const desplegableItems = ref([
       { id: 1, label: 'Alta' },
       { id: 2, label: 'Media' },
       { id: 3, label: 'Baja' },
+    ]);
+    const desplegableItems1 = ref([
+      { id: 1, label: 'Cerrado' },
+      { id: 2, label: 'Abierto' },
     ]);
     const desplegable = ref([
       { id: 1, label: 'Tickets' },
@@ -186,10 +201,16 @@ export default {
     };
 
 
-    const openModal3 = () => {
+    const openModal3 = (ticket) => {
+      selectedTicket.value = ticket;
+      titulo.value = ticket.title;
+      estado.value = ticket.id_status;
+      prioridad.value = ticket.id_priority;
+      tipoTicket.value = ticket.id_type;
+      fechaServicio.value = ticket.fecha_realizar_servicio;
+      descripcion.value = ticket.description;
       isModalOpen3.value = true;
     };
-
     const closeModal = () => {
       isModalOpen.value = false;
       isModalOpen2.value = false;
@@ -235,35 +256,42 @@ export default {
       location.reload();
     }
 
-
     //funcion put para actualizar datos del ticket
+    const enviarTicket = async () => {
+      const datosFormulario = {
+        title: titulo.value,
+        id_status: estado.value,
+        id_type: tipoTicket.value,
+        id_priority: prioridad.value,
+        fecha_realizar_servicio: fechaServicio.value,
+        description: descripcion.value,
+        id_category: selectedTicket.value.id_category,
+        id_managing_user: selectedTicket.value.id_managing_user
+      };
 
-
-    //funcion post para agregar ticker nuevo
-
-    //funcion post para agregar ticker nuevo
-    function agregarUsuario() {
-      // Obtener una referencia al formulario utilizando la referencia "refForm"
-      const form = this.$refs.refForm;
-
-      // Verificar si el formulario es válido antes de enviar los datos
-      if (form && form.validate && form.validate()) {
-        // Obtener los valores de los campos del formulario dinámicamente
-        const formData = {};
-        for (const key in this.selectedTicket) {
-          if (this.selectedTicket.hasOwnProperty(key)) {
-            formData[key] = this.selectedTicket[key];
-          }
-        }
-      }
+      axios.put(`http://54.161.75.90/api/ticket/${selectedTicket.value.id}`, datosFormulario)
+        .then(response => {
+          location.reload();
+          console.log('Respuesta:', response.data);
+        })
+        .catch(error => {
+          console.error('Error al realizar la solicitud PUT:', error);
+        });
+      closeModal();
     }
 
     return {
-      mostrarModal,
+      titulo,
+      estado,
+      prioridad,
+      tipoTicket,
+      descripcion,
+      fechaServicio,
       geticket,
       isLoading,
       selectedTicket,
       desplegableItems,
+      desplegableItems1,
       desplegable,
       isModalOpen,
       isModalOpen2,
@@ -272,9 +300,10 @@ export default {
       openModal2,
       openModal3,
       closeModal,
-      agregarUsuario,
+      enviarTicket,
       filteredTickets,
       eliminarTicket,
+      alerta,
     };
 
   },
@@ -310,7 +339,6 @@ export default {
   }
 }
 </script>
-
 
 <style>
 .modal-overlay {

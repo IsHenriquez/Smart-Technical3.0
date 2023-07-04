@@ -203,7 +203,7 @@ export default {
 
           // Se hace la solicitud DELETE al servidor
           await axios.delete(`http://54.161.75.90/api/user/${userId}`);
-
+          
           // Actualiza la lista de usuarios después de eliminar
           const getUsersResponse = await axios.get('http://54.161.75.90/api/user');
           users.value = getUsersResponse.data.data;

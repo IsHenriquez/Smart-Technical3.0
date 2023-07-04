@@ -1,6 +1,6 @@
 <template>
   <div>
-    <addVehicle/>
+    <addVehicle />
     <div>
       <br>
       <v-table>
@@ -20,10 +20,10 @@
             <td>{{ vehicle.plate }}</td>
             <td>{{ vehicle.brandName }}</td>
             <td>{{ vehicle.modelName }}</td>
-            <td>{{ formatNumber(vehicle.is_busy, busyMap) }}</td> 
+            <td>{{ formatNumber(vehicle.is_busy, busyMap) }}</td>
             <td>
               <VBtn density="compact" icon="mdi-eye" @click="openModal2(vehicle)" />
-              <VBtn v-if="usuarioSecr || usuarioAdmin" density="compact" icon="mdi-pencil" @click="openModal3" />
+              <VBtn v-if="usuarioSecr || usuarioAdmin" density="compact" icon="mdi-pencil" @click="openModal3(vehicle)" />
               <VBtn v-if="usuarioAdmin" density="compact" icon="mdi-delete" @click="openModal(vehicle.id)" />
             </td>
           </tr>
@@ -46,37 +46,32 @@
       </VCard>
     </VDialog>
 
-    <!-- Modal de botón ver usuario -->
+    <!-- Modal de botón ver vehiculo -->
     <VDialog v-model="isModalOpen2" @click:outside="closeModal">
       <VCard class="confirmation3">
-        <VCardTitle style="text-align: center;">Detalle del Usuario</VCardTitle>
+        <VCardTitle style="text-align: center;">Detalle del Vehiculo</VCardTitle>
         <VCardText>
           <v-table>
             <tbody>
               <tr class="tableUser">
                 <th scope="row">ID</th>
-                <td>{{ ": " + selectedUser.id }}</td>
+                <td>{{ ": " + selectedVehicle.id }}</td>
               </tr>
               <tr>
-                <th scope="row">Nombre</th>
-                <td>{{ ": " + selectedUser.name }}</td>
+                <th scope="row">Patente</th>
+                <td>{{ ": " + selectedVehicle.plate }}</td>
               </tr>
               <tr>
-                <th scope="row">Apellido</th>
-                <td>{{ ": " + selectedUser.last_name }}</td>
+                <th scope="row">Marca</th>
+                <td>{{ ": " + selectedVehicle.brandName }}</td>
               </tr>
               <tr>
-                <th scope="row">Email</th>
-                <td>{{ ": " + selectedUser.email }}</td>
+                <th scope="row">Modelo</th>
+                <td>{{ ": " + selectedVehicle.modelName }}</td>
               </tr>
               <tr>
-                <th scope="row">Rol</th>
-                <td>{{ ": " + formatNumber(selectedUser.id_user_type, rolMap) }}</td>
-              </tr>
-              <tr>
-                <th scope="row">Rut</th>
-                <td>{{ ": " + (selectedUser.identification_number !== null ? selectedUser.identification_number : '') }}
-                </td>
+                <th scope="row">Ocupado</th>
+                <td>{{ ": " + formatNumber(selectedVehicle.is_busy, busyMap) }}</td>
               </tr>
             </tbody>
           </v-table>
@@ -90,24 +85,39 @@
     <!-- Modal de botón editar usuario -->
     <VDialog v-model="isModalOpen3" @click:outside="closeModal">
       <VCard class="confirmation">
-        <VCardTitle>Editar Vehiculos</VCardTitle>
+        <VCardTitle>Editar Vehiculo</VCardTitle>
         <VCardText>
-          Vehiculos...
-          <!-- Contenido del modal -->
+          <VForm ref="refForm">
+            <VRow>
+              <VCol cols="12" md="12" class="editform">
+                <AppTextField label="Patente" v-model="patente" />
+              </VCol>
+              <VCol cols="12" md="12" class="editform">
+                <AppTextField label="Marca" v-model="marca" />
+              </VCol>
+              <VCol cols="12" md="12" class="editform">
+                <AppTextField label="Modelo" v-model="modelo" />
+              </VCol>
+              <VCol cols="12" md="12" class="editform">
+                <AppTextField label="Ocupado" v-model="estado" />
+              </VCol>
+            </VRow>
+          </VForm>
         </VCardText>
         <VCardActions>
-          <VBtn @click="closeModal">Confirmar</VBtn>
+          <VBtn @click="enviarVehiculo">Confirmar</VBtn>
           <VBtn @click="closeModal">Cerrar</VBtn>
         </VCardActions>
       </VCard>
     </VDialog>
+
   </div>
 </template>
 
 <script>
 import axios from 'axios';
 import { onMounted, ref } from 'vue';
-import addVehicle from './addVehicle.vue'
+import addVehicle from './addVehicle.vue';
 
 export default {
   name: 'App',
@@ -116,12 +126,16 @@ export default {
   },
   setup() {
     const getVehicle = ref([]);
-    const mostrarModal = ref(false);
     const isModalOpen = ref(false);
     const isModalOpen2 = ref(false);
     const isModalOpen3 = ref(false);
     const isLoading = ref(false);
     const selectedVehicle = ref(null);
+    const vehicle = ref(null);
+    const patente = ref("")
+    const marca = ref("")
+    const modelo = ref("")
+    const estado = ref("")
 
     const usuarioSecr = ref(false);
     const usuarioAdmin = ref(false);
@@ -140,11 +154,17 @@ export default {
       isModalOpen.value = true;
     };
 
-    const openModal2 = () => {
+    const openModal2 = (vehicle) => {
+      selectedVehicle.value = vehicle;
       isModalOpen2.value = true;
     };
 
-    const openModal3 = () => {
+    const openModal3 = (vehicle) => {
+      selectedVehicle.value = vehicle;
+      patente.value = vehicle.plate;
+      modelo.value = vehicle.id_vehicle_model;
+      marca.value = vehicle.id_vehicles_brand;
+      estado.value = vehicle.is_busy;
       isModalOpen3.value = true;
     };
 
@@ -205,8 +225,33 @@ export default {
       isLoading.value = false;
     });
 
+    //funcion put para actualizar datos del ticket
+    const enviarVehiculo = async () => {
+      const datosFormulario = {
+        plate: patente.value,
+        id_vehicle_model: modelo.value,
+        id_vehicles_brand: marca.value,
+        is_busy: estado.value,
+        description: selectedVehicle.value.description,
+        active: selectedVehicle.value.active
+      };
+
+      axios.put(`http://54.161.75.90/api/vehicle/${selectedVehicle.value.id}`, datosFormulario)
+        .then(response => {
+          location.reload();
+          console.log('Respuesta:', response.data);
+        })
+        .catch(error => {
+          console.error('Error al realizar la solicitud PUT:', error);
+        });
+      closeModal();
+    }
+
     return {
-      mostrarModal,
+      patente,
+      marca,
+      modelo,
+      estado,
       isModalOpen,
       isModalOpen2,
       isModalOpen3,
@@ -215,6 +260,8 @@ export default {
       openModal2,
       openModal3,
       isLoading,
+      vehicle,
+      enviarVehiculo,
       eliminarVehiculo,
       selectedVehicle,
       getVehicle,
@@ -276,6 +323,15 @@ export default {
   max-inline-size: 700px;
   transform: translateY(-29%);
   transform: translateX(23%);
+}
+
+.confirmation3 {
+  block-size: 420px;
+  inline-size: 500px;
+  inset-block-start: 50%;
+  margin-inline: auto;
+  transform: translateY(-29%);
+  transform: translateX(2%);
 }
 
 .fade-enter-active,

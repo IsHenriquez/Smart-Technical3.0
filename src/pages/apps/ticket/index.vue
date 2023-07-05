@@ -101,7 +101,7 @@
     </VCard>
   </VDialog>
 
-  <!--Modal de boton editar usuario-->
+  <!--Modal de boton editar ticket-->
   <VDialog v-model="isModalOpen3" @click:outside="closeModal">
     <VCard class="confirmation">
       <VCardTitle>Editar Ticket</VCardTitle>
@@ -204,9 +204,36 @@ export default {
     const openModal3 = (ticket) => {
       selectedTicket.value = ticket;
       titulo.value = ticket.title;
-      estado.value = ticket.id_status;
-      prioridad.value = ticket.id_priority;
-      tipoTicket.value = ticket.id_type;
+      var tempStatus = ticket.id_status;
+      
+      if (tempStatus === 2){
+        var status = "Abierto"
+      } else if (tempStatus === 3){
+        var status = "Cerrado"
+      }
+      estado.value = status
+
+      var tempPriority = ticket.id_priority;
+
+      if (tempPriority === 1){
+        var priority = "Baja"
+      } else if (tempPriority === 2){
+        var priority = "Media"
+      } else if(tempPriority === 3){
+        var priority = "Alta"
+      }
+
+      prioridad.value = priority
+
+      var tempType = ticket.id_type;
+
+      if (tempType === 1){
+        var type = "Tickets"
+      } else if (tempType === 2){
+        var type = "Cita"
+      }
+
+      tipoTicket.value = type
       fechaServicio.value = ticket.fecha_realizar_servicio;
       descripcion.value = ticket.description;
       isModalOpen3.value = true;

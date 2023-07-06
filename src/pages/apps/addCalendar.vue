@@ -12,6 +12,7 @@
         <!-- Contenido del formulario aquí -->
         <PerfectScrollbar :options="{ wheelPropagation: false }">
           <VCard flat class="agrandarModal">
+            <VCardTitle>Agregar cita</VCardTitle>
             <VCardText>
               <!-- SECTION Form -->
               <VForm ref="refForm">
@@ -147,7 +148,7 @@ export default {
 }
 
 .agrandarModal{
-  block-size: 500px;
+  block-size: 600px;
 }
 
 .custom-datepicker {
@@ -163,7 +164,7 @@ export default {
 
 .modal {
   padding: 20px;
-  inline-size: 300px;
+  inline-size: 400px;
   transform: translateX(-37%);
   
 }

@@ -89,9 +89,10 @@
         <VCardText>
           <VForm ref="refForm">
             <VRow>
-              <VCol cols="12" md="12" class="editform">
-                <AppTextField label="Patente" v-model="patente" />
+              <VCol cols="12" md="12" class="formatForm">
+                <AppTextField label="Patente" v-model="patente" @input="patente = $event.target.value.toUpperCase()"/>
               </VCol>
+              <!--
               <VCol cols="12" md="12" class="editform">
                 <AppTextField label="Marca" v-model="marca" />
               </VCol>
@@ -101,6 +102,7 @@
               <VCol cols="12" md="12" class="editform">
                 <AppTextField label="Ocupado" v-model="estado" />
               </VCol>
+              -->
             </VRow>
           </VForm>
         </VCardText>
@@ -320,7 +322,8 @@ export default {
   inset-block-start: 50%;
   margin-block: 0;
   margin-inline: auto;
-  max-inline-size: 700px;
+  max-inline-size: 400px;
+  block-size: 220px;
   transform: translateY(-29%);
   transform: translateX(23%);
 }
@@ -342,5 +345,9 @@ export default {
 .fade-enter,
 .fade-leave-to {
   opacity: 0;
+}
+
+.formatForm{
+  inline-size: 200px;
 }
 </style>

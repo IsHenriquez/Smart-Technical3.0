@@ -110,8 +110,9 @@
           <VRow>
             <!-- 👉 Title -->
             <VCol cols="12" md="12" class="editform">
-              <AppTextField label="Title" v-model="titulo" />
+              <AppTextField label="Titulo" v-model="titulo" />
             </VCol>
+          <!--
             <VCol cols="12" md="12">
               <AppSelect label="Estado" :items="desplegableItems1" :item-title="item => item.label" v-model="estado" />
             </VCol>
@@ -127,7 +128,7 @@
               <VueDatePicker v-model="fechaServicio" :enable-time-picker="false" class="custom-datepicker"
                 model-type="yyyy-MM-dd">
               </VueDatePicker>
-            </VCol>
+            </VCol> -->
             <VCol cols="12">
               <AppTextarea label="Descripción" v-model="descripcion" />
             </VCol>
@@ -203,7 +204,11 @@ export default {
 
     const openModal3 = (ticket) => {
       selectedTicket.value = ticket;
-      titulo.value = ticket.title;
+
+      var tempTitle = ticket.title;
+      titulo.value = tempTitle
+
+
       var tempStatus = ticket.id_status;
       
       if (tempStatus === 2){
@@ -284,17 +289,46 @@ export default {
     }
 
     //funcion put para actualizar datos del ticket
-    const enviarTicket = async () => {
+    const enviarTicket =  () => {
+
+
+
+      
+
+      if (estado.value = "Abierto"){
+        var tempSatusNum = 2
+      } else if (estado.value = "Cerrado"){
+        var tempSatusNum = 3
+      }
+
+      if(tipoTicket.value = "Tickets"){
+        var tempTypeNum = 1
+      } else if (tipoTicket.value = "Cita"){
+        var tempTypeNum = 2
+      }
+
+      if (prioridad.value = "Baja"){
+        var tempPriorityNum = 1
+      } else if(prioridad.value = "Media") {
+        var tempPriorityNum = 2
+      } else if(prioridad.value = "Alta") {
+        var tempPriorityNum = 3
+      }
+
+
       const datosFormulario = {
         title: titulo.value,
-        id_status: estado.value,
-        id_type: tipoTicket.value,
-        id_priority: prioridad.value,
+        id_status: tempSatusNum,
+        id_type: tempTypeNum,
+        id_priority: tempPriorityNum,
         fecha_realizar_servicio: fechaServicio.value,
         description: descripcion.value,
         id_category: selectedTicket.value.id_category,
         id_managing_user: selectedTicket.value.id_managing_user
       };
+
+      console.log("datos", datosFormulario)
+      console.log(selectedTicket.value.id)
 
       axios.put(`http://54.161.75.90/api/ticket/${selectedTicket.value.id}`, datosFormulario)
         .then(response => {

@@ -28,7 +28,7 @@
     
   </VCol>
     <div class="space-y-2">
-      <VCalendar :initial-page="{ month: 6, year: 2023 }" expanded :is-dark="isDark" :attributes="attributes" class="calendario" />
+      <VCalendar :initial-page="{ month: 7, year: 2023 }" expanded :is-dark="isDark" :attributes="attributes" class="calendario" />
     </div>
     <div class="flex items-center space-x-2 checkOscuro">
       <v-checkbox class="checkboxFiltro" label="Modo Oscuro" v-model="isDark"></v-checkbox>

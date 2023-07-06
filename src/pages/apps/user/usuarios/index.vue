@@ -224,6 +224,7 @@ export default {
         last_name: apellido.value,
         email: email.value,
         phone: phone.value,
+        identification_number: selectedUser.value.identification_number,
         active: selectedUser.value.active,
         id_user_type: selectedUser.value.id_user_type
       };

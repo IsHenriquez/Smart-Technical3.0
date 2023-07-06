@@ -31,6 +31,12 @@
                   </AppSelect>
                 </VCol>
                 <VCol cols="12" md="12">
+                  
+                  <label for="datepicker">Fecha realizar servicio</label>
+                  
+                    <VueDatePicker v-model="date" :enable-time-picker="false" class="custom-datepicker" model-type="yyyy-MM-dd"></VueDatePicker>
+                </VCol>
+                <VCol cols="12" md="12">
                   <AppSelect label="Tipo Ticket" :items="desplegable" :item-title="item => item.label"
                     v-model="type" ref="typeField" >
                     <template #selection="{ item }">
@@ -54,12 +60,7 @@
                     ></v-combobox>
                 </VCol>
                 
-                <VCol cols="12" md="12">
-                  
-                  <label for="datepicker">Fecha realizar servicio</label>
-                  
-                    <VueDatePicker v-model="date" :enable-time-picker="false" class="custom-datepicker" model-type="yyyy-MM-dd"></VueDatePicker>
-                </VCol>
+                
 
                 <!-- 👉 Description -->
                 <VCol cols="12">
